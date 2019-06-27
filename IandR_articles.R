@@ -39,6 +39,30 @@ table(
 abstract = xml_contents(xml_find_all(IR, ".//abstract") )
 length(abstract)   #### 627
 
-abstract = xml_contents(xml_find_all(IR, ".//abstract") )
+abstract = (xml_find_all(IR, ".//abstract") )
+length(abstract)
+
+abstracts_list = sapply(xml_find_all(IR, ".//record"),
+              xml_find_all, 
+              xpath=".//abstract") 
+abstracts = sapply(abstracts_list, as.character)
+length(abstracts)
+### replace "abstracts" with no abstract entry at all  with empty strings.
+abstracts[[641]]
+have_no_abstract = which(  sapply(abstracts, length) == 0) 
+abstracts[have_no_abstract] = ""
+abstracts[[641]]
+abstracts = unlist(abstracts)
+grep('oncotype', (abstracts), ignore.case = TRUE)
+### this works!
+
+####   Which are review articles?
+####  Which are clinical articles (patient data focus)?
+####   ....
+
+#### TODO:  separate into two piles silver and brass.
+####  Select only clinical papers.
+####  rank order, essential ones first (early; randomized), others. 
+
 
 
