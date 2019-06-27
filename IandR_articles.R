@@ -27,9 +27,18 @@ table( exclude = NULL,
 grep("Isabel&amp;Roger 2019", tags_split)
 
 
+length(xml_find_all(IR, ".//record") ) 
 
 ###  Lengths of the 668 nodesets.
+
 table(
   sapply(FUN = length, xml_children(IR)[[1]])
 )
+
+#### How many articles have abstracts?
+abstract = xml_contents(xml_find_all(IR, ".//abstract") )
+length(abstract)   #### 627
+
+abstract = xml_contents(xml_find_all(IR, ".//abstract") )
+
 
