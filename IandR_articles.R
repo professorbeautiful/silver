@@ -46,6 +46,7 @@ grep("Isabel&amp;Roger 2019", tags_split)
 
 
 #### How many articles have abstracts?
+###OK for now.... better to follow the pattern used above for the label (tag) nodes.
 abstract = xml_contents(xml_find_all(IR, ".//abstract") )
 length(abstract)   #### 627
 
