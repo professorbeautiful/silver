@@ -97,3 +97,4 @@ sapply(1:length(record_nodes),
        }
 )
 #Finally, rewrite the xml doc.
+write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
