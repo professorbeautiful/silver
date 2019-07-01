@@ -57,6 +57,7 @@ abstracts_list = sapply(xml_find_all(IR, ".//record"),
               xpath=".//abstract") 
 abstracts = sapply(abstracts_list, as.character)
 length(abstracts)
+
 ### replace "abstracts" with no abstract entry at all  with empty strings.
 abstracts[[641]]
 have_no_abstract = which(  sapply(abstracts, length) == 0) 
@@ -78,4 +79,21 @@ assignments = sample(rep(c('_Silver', '_Brass'), each=length(abstracts)/2),
                       replace=FALSE)
 table(assignments)  ### 334 each.
 
-xml_replace(.x=xml_find_all(IR, ".//label")[[1]], .value='', .copy = TRUE)
+length(tags)
+table(nchar(as.character(tags)))
+which(nchar(as.character(tags)) == min(nchar(as.character(tags))))  ## 5
+tags[90]
+### record 90 is  "pmc99" only.
+
+#### Now, let's add the assignments into the tags.
+sapply(1:length(record_nodes),
+       function(node_number) {
+         cat(node_number, ' ')
+         newlabel = read_xml(
+           paste0('<label> ', assignments[node_number], ';', tags[node_number], '</label>')
+         )
+         xml_replace(.x=xml_find_all(IR, ".//label")[[node_number]], 
+                     .value=newlabel, .copy = TRUE)
+       }
+)
+#Finally, rewrite the xml doc.
