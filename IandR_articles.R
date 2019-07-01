@@ -99,3 +99,5 @@ sapply(1:length(record_nodes),
 )
 #Finally, rewrite the xml doc.
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
+### The written document looks good.
+### But Mendeley is not doing the re-import correctly yet.
