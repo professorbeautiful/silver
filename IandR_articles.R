@@ -91,9 +91,9 @@ sapply(1:length(record_nodes),
        function(node_number) {
          cat(node_number, ' ')
          newlabel = read_xml(
-           paste0('<label> ', assignments[node_number], ';', tags[node_number], '</label>')
+           paste0('<label>', assignments[node_number], ';', tags[node_number], '</label>')
          )
-         xml_replace(.x=xml_find_all(IR, ".//label")[[node_number]], 
+         xml_replace(.x=tag_nodes[[node_number]], 
                      .value=newlabel, .copy = TRUE)
        }
 )
