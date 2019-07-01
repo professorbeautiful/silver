@@ -62,6 +62,11 @@ mammaprint_in_Ab= regexpr(pattern='mammaprint|70 gene|70-gene', text = abstracts
 mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
 
 grep("Isabel&amp;Roger 2019", tags_split)
+#######
+
+years = get_nodes(".//year")
+table(years)
+### 3 have no year.
 
 
 ####   Which are review articles?
