@@ -21,14 +21,19 @@ titles = as.character(title_nodes)
 titles[1]
 
 ### Careful here.
-tags = xml_contents(xml_find_all(IR, ".//label") )
-length(tags)  ### NO!  545.   We must not skip the ones without tags.
+#tags = xml_contents(xml_find_all(IR, ".//label") )
+#length(tags)  ### NO!  545.   We must not skip the ones without tags.
 ### Better:
-tag_nodes = sapply(record_nodes, xml_find_all, ".//label") 
-tags = sapply(tag_nodes, xml_contents )
-length(tags)   ### OK,  668.
-tags = sapply(tags, as.character)
-
+get_nodes <- function(path=".//label") {
+  the_nodes = sapply(record_nodes, xml_find_all, path) 
+  contents = sapply(the_nodes, xml_contents )
+  empty = sapply(contents, length)==0
+  contents[empty] = ''
+  cat(length(contents) ,'\n')  ### OK,  668.
+  unlist(sapply(contents, as.character))
+}
+tags = get_nodes()
+head(tags)
 tags_split = strsplit(split=';', gsub('&amp;', '&', tags)  )
 length(grep("Isabel&amp;Roger 2019", tags))  ### Only 500
 ### OK for tags!!!
@@ -36,11 +41,23 @@ table( sapply(tags_split, length) )
 # 1   2   3   4   5   6   7 
 # 126 238 253   4  44   2   1 
 ## So 126 have only one tag.
+
 hits_for_Oncotype_DX= sapply(tags_split, grep, pattern='Oncotype DX') 
 hits_for_Oncotype_DX[0==sapply(hits_for_Oncotype_DX, length)] = NA
 table( exclude = NULL,
   unlist(hits_for_Oncotype_DX  )
 )
+
+oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
+                        ignore.case=TRUE) > 0
+oncotype_in_Ab= regexpr(pattern='oncotype|21 gene|21-gene', text = abstracts, 
+                        ignore.case=TRUE) > 0
+oncotype_in_TiAb = oncotype_in_Ti | oncotype_in_Ab
+mammaprint_in_Ti= regexpr(pattern='mammaprint|70 gene|70-gene', text = titles, 
+                        ignore.case=TRUE) > 0
+mammaprint_in_Ab= regexpr(pattern='mammaprint|70 gene|70-gene', text = abstracts, 
+                        ignore.case=TRUE) > 0
+mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
 
 grep("Isabel&amp;Roger 2019", tags_split)
 
@@ -101,3 +118,4 @@ sapply(1:length(record_nodes),
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 ### The written document looks good.
 ### But Mendeley is not doing the re-import correctly yet.
+write_xml(IR, 'exporting-from-R.xml')
