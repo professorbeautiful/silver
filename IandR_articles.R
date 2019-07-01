@@ -5,22 +5,37 @@ str(IR)
 IR[[1]]
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 
-xml_contents( xml_contents(xml_children(IR))  [1] )
-length(xml_contents(xml_children(IR)) )  ### 668
-
-xml_contents( xml_contents(xml_children(IR))  [1] )[13]
+record_nodes = xml_find_all(IR, ".//record")
+length(record_nodes) 
+###  Lengths of the 668 record nodesets.
+table(
+  sapply(FUN = length, sapply(record_nodes, xml_children) )
+)
+# 9  10  11  12  13  14  15  16  17  18 
+# 1   4   1  11  16  49 211 370   4   1 
 
 title_nodes = xml_contents(xml_find_all(IR, ".//title") )
+length(title_nodes)   #### They all have a title node.
 title_nodes[grep ('mammaprint', xml_contents(xml_find_all(IR, ".//label") ) ) ]
 titles = as.character(title_nodes)
 titles[1]
 
+### Careful here.
 tags = xml_contents(xml_find_all(IR, ".//label") )
-length(tags)  ### 545 initially
-tags_split = strsplit(split=';', gsub('&amp;', '&', tags)  )
-length(grep("Isabel&amp;Roger 2019", tags))  ### 500
-table( sapply(tags_split, length) )
+length(tags)  ### NO!  545.   We must not skip the ones without tags.
+### Better:
+tag_nodes = sapply(record_nodes, xml_find_all, ".//label") 
+tags = sapply(tag_nodes, xml_contents )
+length(tags)   ### OK,  668.
+tags = sapply(tags, as.character)
 
+tags_split = strsplit(split=';', gsub('&amp;', '&', tags)  )
+length(grep("Isabel&amp;Roger 2019", tags))  ### Only 500
+### OK for tags!!!
+table( sapply(tags_split, length) )
+# 1   2   3   4   5   6   7 
+# 126 238 253   4  44   2   1 
+## So 126 have only one tag.
 hits_for_Oncotype_DX= sapply(tags_split, grep, pattern='Oncotype DX') 
 hits_for_Oncotype_DX[0==sapply(hits_for_Oncotype_DX, length)] = NA
 table( exclude = NULL,
@@ -29,15 +44,6 @@ table( exclude = NULL,
 
 grep("Isabel&amp;Roger 2019", tags_split)
 
-record_nodes = xml_find_all(IR, ".//record")
-length(record_nodes) 
-
-###  Lengths of the 668 nodesets.
-table(
-  sapply(FUN = length, sapply(record_nodes, xml_children) )
-)
-# 9  10  11  12  13  14  15  16  17  18 
-# 1   4   1  11  16  49 211 370   4   1 
 
 #### How many articles have abstracts?
 abstract = xml_contents(xml_find_all(IR, ".//abstract") )
