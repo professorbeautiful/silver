@@ -64,9 +64,12 @@ grep('oncotype', (abstracts), ignore.case = TRUE)
 ####  Which are clinical articles (patient data focus)?
 ####   ....
 
-#### TODO:  separate into two piles silver and brass.
+#### TODO:  separate into two piles silver (Isabel) and brass (Roger).
 ####  Select only clinical papers.
 ####  rank order, essential ones first (early; randomized), others. 
 
+assignments = sample(rep(c('_Silver', '_Brass'), each=length(abstracts)/2),
+                      replace=FALSE)
+table(assignments)  ### 334 each.
 
-
+xml_replace(.x=xml_find_all(IR, ".//label")[[1]], .value='', .copy = TRUE)
