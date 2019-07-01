@@ -1,16 +1,19 @@
+###  We need to re-read this file and reconstruct IR each time?
 library('xml2')
-
 IR = read_xml('importing-to-R.xml')
 str(IR)
-
 IR[[1]]
+write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
+
 xml_contents( xml_contents(xml_children(IR))  [1] )
 length(xml_contents(xml_children(IR)) )  ### 668
 
 xml_contents( xml_contents(xml_children(IR))  [1] )[13]
 
-titles = xml_contents(xml_find_all(IR, ".//title") )
-titles[grep ('mammaprint', xml_contents(xml_find_all(IR, ".//label") ) ) ]
+title_nodes = xml_contents(xml_find_all(IR, ".//title") )
+title_nodes[grep ('mammaprint', xml_contents(xml_find_all(IR, ".//label") ) ) ]
+titles = as.character(title_nodes)
+titles[1]
 
 tags = xml_contents(xml_find_all(IR, ".//label") )
 length(tags)  ### 545 initially
@@ -26,14 +29,15 @@ table( exclude = NULL,
 
 grep("Isabel&amp;Roger 2019", tags_split)
 
-
-length(xml_find_all(IR, ".//record") ) 
+record_nodes = xml_find_all(IR, ".//record")
+length(record_nodes) 
 
 ###  Lengths of the 668 nodesets.
-
 table(
-  sapply(FUN = length, xml_children(IR)[[1]])
+  sapply(FUN = length, sapply(record_nodes, xml_children) )
 )
+# 9  10  11  12  13  14  15  16  17  18 
+# 1   4   1  11  16  49 211 370   4   1 
 
 #### How many articles have abstracts?
 abstract = xml_contents(xml_find_all(IR, ".//abstract") )
