@@ -67,6 +67,8 @@ grep("Isabel&amp;Roger 2019", tags_split)
 years = get_nodes(".//year")
 table(years)
 ### 3 have no year.
+#######
+
 
 
 ####   Which are review articles?
@@ -103,3 +105,9 @@ write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 ### The written document looks good.
 ### But Mendeley is not doing the re-import correctly yet.
 write_xml(IR, 'exporting-from-R.xml')
+
+
+##########
+library(openxlsx)
+IR.df = data.frame(titles, abstracts, years, tags)
+write.csv(IR.df, file = 'IR.df.csv')
