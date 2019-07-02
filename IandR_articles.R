@@ -33,23 +33,12 @@ get_node_contents <- function(path=".//label", do.unlist=TRUE) {
 
 ##### TITLES ####
 title_nodes = get_nodes(".//ArticleTitle")
-(sapply(title_nodes, xml_find_all, xpath=".//ArticleTitle"))
+table(sapply(get_node_contents(".//ArticleTitle", do.unlist = F) , length) )
 title_list = get_node_contents(".//ArticleTitle", do.unlist = F)
 title_list_lengths = sapply( title_list, length) 
 table(title_list_lengths)
-title_list [[ which(title_list_lengths == 5) ]]
-title_list [ which(title_list_lengths !=  1) ]
-
-
-
-#title1_nodes = 
-
-# title_nodes = xml_contents(xml_find_all(IR, ".//ArticleTitle") )
-length(title_nodes)   #### They all have a title node.
-titles = as.character(title_nodes)
-titles[1]
-
-table(sapply(get_node_contents(".//ArticleTitle", do.unlist = F) , length) )
+titles = sapply(title_list, paste0, collapse = '')
+str(titles)
 
 #### ABSTRACTS ####
 abstracts = get_node_contents(".//abstract")
