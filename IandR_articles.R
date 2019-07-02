@@ -1,6 +1,6 @@
 ###  We need to re-read this file and reconstruct IR each time?
 library('xml2')
-IR = read_xml('importing-to-R.xml')
+IR = read_xml('pubmed_result oncotype or mammaprint.xml')
 str(IR)
 IR[[1]]
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
