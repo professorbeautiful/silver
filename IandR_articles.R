@@ -22,7 +22,7 @@ titles[1]
 ### Careful here.
 get_nodes <- function(path=".//label") 
   sapply(record_nodes, xml_find_all, path) 
-  
+
 get_node_contents <- function(path=".//label") {
   the_nodes = get_nodes(path)
   contents = sapply(the_nodes, xml_contents )
@@ -45,16 +45,20 @@ mammaprint_in_Ab= regexpr(pattern='mammaprint|70 gene|70-gene', text = abstracts
                         ignore.case=TRUE) > 0
 mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
 
-#######
+#### YEARS ####
 
 years = get_node_contents(".//year")
 table(years)
 ### 3 have no year.
-#######
 
-pmid = get_node_contents(".//accession-num")
+#### PMID ####
+
+pmid = get_node_contents('.//PMID')
 pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
                   pmid, '%5Bpmid%5D')
+table(nchar(pmid))
+table(table(pmid))
+
 
 ####   Which are review articles?
 ####  Which are clinical articles (patient data focus)?
@@ -76,7 +80,7 @@ write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 write_xml(IR, 'exporting-from-R.xml')
 
 
-##########
+##### EXPORTING #####
 library(openxlsx)
 IR.df = data.frame(pmid_url, titles, abstracts, pmid, years,
                    mammaprint_in_TiAb, oncotype_in_TiAb)
@@ -84,3 +88,4 @@ write.csv(IR.df, file = 'IR.df.csv')
 write.table(IR.df, file = 'IR.df.tabsv.xls', sep='\t', row.names = F)
 #  
 system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
+#system('open IR.df.tabsv.xls')
