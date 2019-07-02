@@ -16,39 +16,23 @@ table(
 
 title_nodes = xml_contents(xml_find_all(IR, ".//title") )
 length(title_nodes)   #### They all have a title node.
-title_nodes[grep ('mammaprint', xml_contents(xml_find_all(IR, ".//label") ) ) ]
 titles = as.character(title_nodes)
 titles[1]
 
 ### Careful here.
-#tags = xml_contents(xml_find_all(IR, ".//label") )
-#length(tags)  ### NO!  545.   We must not skip the ones without tags.
-### Better:
-get_nodes <- function(path=".//label") {
-  the_nodes = sapply(record_nodes, xml_find_all, path) 
+get_nodes <- function(path=".//label") 
+  sapply(record_nodes, xml_find_all, path) 
+  
+get_node_contents <- function(path=".//label") {
+  the_nodes = get_nodes(path)
   contents = sapply(the_nodes, xml_contents )
   empty = sapply(contents, length)==0
   contents[empty] = ''
   cat(length(contents) ,'\n')  ### OK,  668.
   unlist(sapply(contents, as.character))
 }
-tags = get_nodes()
-head(tags)
-tags_split = strsplit(split=';', gsub('&amp;', '&', tags)  )
-length(grep("Isabel&amp;Roger 2019", tags))  ### Only 500
-### OK for tags!!!
-table( sapply(tags_split, length) )
-# 1   2   3   4   5   6   7 
-# 126 238 253   4  44   2   1 
-## So 126 have only one tag.
 
-hits_for_Oncotype_DX= sapply(tags_split, grep, pattern='Oncotype DX') 
-hits_for_Oncotype_DX[0==sapply(hits_for_Oncotype_DX, length)] = NA
-table( exclude = NULL,
-  unlist(hits_for_Oncotype_DX  )
-)
-
-abstracts = get_nodes(".//abstract")
+abstracts = get_node_contents(".//abstract")
 
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
                         ignore.case=TRUE) > 0
@@ -61,15 +45,16 @@ mammaprint_in_Ab= regexpr(pattern='mammaprint|70 gene|70-gene', text = abstracts
                         ignore.case=TRUE) > 0
 mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
 
-grep("Isabel&amp;Roger 2019", tags_split)
 #######
 
-years = get_nodes(".//year")
+years = get_node_contents(".//year")
 table(years)
 ### 3 have no year.
 #######
 
-
+pmid = get_node_contents(".//accession-num")
+pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+                  pmid, '%5Bpmid%5D')
 
 ####   Which are review articles?
 ####  Which are clinical articles (patient data focus)?
@@ -83,23 +68,7 @@ assignments = sample(rep(c('_Silver', '_Brass'), each=length(abstracts)/2),
                       replace=FALSE)
 table(assignments)  ### 334 each.
 
-length(tags)
-table(nchar(as.character(tags)))
-which(nchar(as.character(tags)) == min(nchar(as.character(tags))))  ## 5
-tags[90]
-### record 90 is  "pmc99" only.
 
-#### Now, let's add the assignments into the tags.
-sapply(1:length(record_nodes),
-       function(node_number) {
-         cat(node_number, ' ')
-         newlabel = read_xml(
-           paste0('<label>', assignments[node_number], ';', tags[node_number], '</label>')
-         )
-         xml_replace(.x=tag_nodes[[node_number]], 
-                     .value=newlabel, .copy = TRUE)
-       }
-)
 #Finally, rewrite the xml doc.
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 ### The written document looks good.
@@ -109,5 +78,9 @@ write_xml(IR, 'exporting-from-R.xml')
 
 ##########
 library(openxlsx)
-IR.df = data.frame(titles, abstracts, years, tags)
+IR.df = data.frame(pmid_url, titles, abstracts, pmid, years,
+                   mammaprint_in_TiAb, oncotype_in_TiAb)
 write.csv(IR.df, file = 'IR.df.csv')
+write.table(IR.df, file = 'IR.df.tabsv.xls', sep='\t', row.names = F)
+#  
+system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
