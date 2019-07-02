@@ -42,6 +42,7 @@ str(titles)
 
 #### ABSTRACTS ####
 abstracts = get_node_contents(".//abstract")
+length(abstracts)
 
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
                         ignore.case=TRUE) > 0
