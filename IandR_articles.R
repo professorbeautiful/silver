@@ -5,7 +5,7 @@ str(IR)
 IR[[1]]
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 
-record_nodes = xml_find_all(IR, ".//record")
+record_nodes = xml_find_all(IR, ".//PubmedArticle")
 length(record_nodes) 
 ###  Lengths of the 668 record nodesets.
 table(
@@ -14,24 +14,44 @@ table(
 # 9  10  11  12  13  14  15  16  17  18 
 # 1   4   1  11  16  49 211 370   4   1 
 
-title_nodes = xml_contents(xml_find_all(IR, ".//title") )
-length(title_nodes)   #### They all have a title node.
-titles = as.character(title_nodes)
-titles[1]
 
 ### Careful here.
-get_nodes <- function(path=".//label") 
+get_nodes <- function(path=".//label") {
   sapply(record_nodes, xml_find_all, path) 
+}
 
-get_node_contents <- function(path=".//label") {
+get_node_contents <- function(path=".//label", do.unlist=TRUE) {
   the_nodes = get_nodes(path)
   contents = sapply(the_nodes, xml_contents )
   empty = sapply(contents, length)==0
   contents[empty] = ''
   cat(length(contents) ,'\n')  ### OK,  668.
-  unlist(sapply(contents, as.character))
+  result = sapply(contents, as.character)
+  if(do.unlist) result = unlist(result)
+  result
 }
 
+##### TITLES ####
+title_nodes = get_nodes(".//ArticleTitle")
+(sapply(title_nodes, xml_find_all, xpath=".//ArticleTitle"))
+title_list = get_node_contents(".//ArticleTitle", do.unlist = F)
+title_list_lengths = sapply( title_list, length) 
+table(title_list_lengths)
+title_list [[ which(title_list_lengths == 5) ]]
+title_list [ which(title_list_lengths !=  1) ]
+
+
+
+#title1_nodes = 
+
+# title_nodes = xml_contents(xml_find_all(IR, ".//ArticleTitle") )
+length(title_nodes)   #### They all have a title node.
+titles = as.character(title_nodes)
+titles[1]
+
+table(sapply(get_node_contents(".//ArticleTitle", do.unlist = F) , length) )
+
+#### ABSTRACTS ####
 abstracts = get_node_contents(".//abstract")
 
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
