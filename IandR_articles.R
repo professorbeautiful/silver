@@ -62,25 +62,34 @@ abstracts = as.vector(get_node_contents(".//AbstractText"))
 abstracts = gsub('<i>|</i>', '', abstracts)
 str(abstracts)
 
+#### KEYWORDS ####
+keywords = get_node_contents('.//Keyword', collapse=';')
+
+#### WHICH TESTS ####
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
                         ignore.case=TRUE) > 0
 oncotype_in_Ab= regexpr(pattern='oncotype|21 gene|21-gene', text = abstracts, 
                         ignore.case=TRUE) > 0
-oncotype_in_TiAb = oncotype_in_Ti | oncotype_in_Ab
+oncotype_in_Kw= regexpr(pattern='oncotype|21 gene|21-gene', text = keywords, 
+                        ignore.case=TRUE) > 0
+oncotype_in_TiAbKw = oncotype_in_Ti | oncotype_in_Ab | oncotype_in_Kw
 mammaprint_in_Ti= regexpr(pattern='mammaprint|70 gene|70-gene', text = titles, 
                         ignore.case=TRUE) > 0
 mammaprint_in_Ab= regexpr(pattern='mammaprint|70 gene|70-gene', text = abstracts, 
                         ignore.case=TRUE) > 0
-mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
+mammaprint_in_Kw= regexpr(pattern='mammaprint|70 gene|70-gene', text = keywords, 
+                          ignore.case=TRUE) > 0
+mammaprint_in_TiAbKw = mammaprint_in_Ti | mammaprint_in_Ab | mammaprint_in_Kw
 
 #### Exploring problems with the TiAb classification.
-table(mammaprint_in_TiAb,oncotype_in_TiAb)
-titles[mammaprint_in_TiAb & oncotype_in_TiAb]  ### OK
-table(mammaprint_in_Ab,oncotype_in_Ab)
+table(mammaprint_in_TiAbKw,oncotype_in_TiAbKw)
 
-titles[(!mammaprint_in_TiAb) & (!oncotype_in_TiAb)] [1] 
-abstracts[(!mammaprint_in_TiAb) & (!oncotype_in_TiAb)] [1] 
-pmid[(!mammaprint_in_TiAb) & (!oncotype_in_TiAb)] [1] 
+titles[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
+abstracts[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
+keywords[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
+pmid[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
+### This one is selected by "21 gene" in the abstract, but it is a DIFFERENT set of genes!
+pmid_to_remove = pmid[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
 
 #### YEARS ####
 
@@ -123,6 +132,26 @@ assignments = sample(rep(c('_Silver', '_Brass'), each=length(abstracts)/2),
 table(assignments)  ### 334 each.
 
 
+#####  REMOVING pmid_to_remove ####
+which_to_remove = which(pmid==pmid_to_remove)
+xml_remove(record_nodes[which_to_remove])
+titles = titles[-which_to_remove]
+abstracts = abstracts[-which_to_remove]
+years = years[-which_to_remove]
+assignments = assignments[-which_to_remove]
+pmid = pmid[-which_to_remove]
+pmid_url = pmid_url[-which_to_remove]
+keywords = keywords[-which_to_remove]
+mammaprint_in_Ti = mammaprint_in_Ti[-which_to_remove]
+mammaprint_in_Ab = mammaprint_in_Ab[-which_to_remove]
+mammaprint_in_Kw = mammaprint_in_Kw[-which_to_remove]
+mammaprint_in_TiAbKw = mammaprint_in_TiAbKw[-which_to_remove]
+oncotype_in_Ti = oncotype_in_Ti[-which_to_remove]
+oncotype_in_Ab = oncotype_in_Ab[-which_to_remove]
+oncotype_in_Kw = oncotype_in_Kw[-which_to_remove]
+oncotype_in_TiAbKw = oncotype_in_TiAbKw[-which_to_remove]
+
+
 #Finally, rewrite the xml doc.
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 ### The written document looks good.
@@ -131,7 +160,7 @@ write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 ##### EXPORTING #####
 library(openxlsx)
 IR.df = data.frame(pmid_url, titles, abstracts, pmid, years,
-                   mammaprint_in_TiAb, oncotype_in_TiAb)
+                   mammaprint_in_TiAbKw, oncotype_in_TiAbKw)
 write.csv(IR.df, file = 'IR.df.csv')
 write.table(IR.df, file = 'IR.df.tabsv.xls', sep='\t', row.names = F)
 #  
