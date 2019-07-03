@@ -7,7 +7,7 @@ write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 
 record_nodes = xml_find_all(IR, ".//PubmedArticle")
 length(record_nodes) 
-###  Lengths of the 668 record nodesets.
+###  Lengths of the 662 record nodesets.
 table(
   sapply(FUN = length, sapply(record_nodes, 
                               function(node)xml_children(xml_children(node))) )
