@@ -58,9 +58,18 @@ mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
 
 #### YEARS ####
 
-years = get_node_contents(".//PubDate")
-table(years)
-### 3 have no year.
+years = get_node_contents(".//PubMedPubDate//Year")
+sum(table(years))
+table(years, exclude=NULL)  
+### 24 article have no pub year but do have PubMedPubDate year.
+months = get_node_contents(".//PubMedPubDate//Month")
+table(months)
+sum(months=='')
+days = get_node_contents(".//PubMedPubDate//Day")
+sum(days=='')
+library(lubridate)
+pubMedPubDate = ymd(apply(cbind(years,months,days), MARGIN = 1, FUN = paste, collapse='-'))
+
 
 #### PMID ####
 
