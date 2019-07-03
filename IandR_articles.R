@@ -9,7 +9,8 @@ record_nodes = xml_find_all(IR, ".//PubmedArticle")
 length(record_nodes) 
 ###  Lengths of the 668 record nodesets.
 table(
-  sapply(FUN = length, sapply(record_nodes, xml_children) )
+  sapply(FUN = length, sapply(record_nodes, 
+                              function(node)xml_children(xml_children(node))) )
 )
 # 9  10  11  12  13  14  15  16  17  18 
 # 1   4   1  11  16  49 211 370   4   1 
@@ -57,7 +58,7 @@ mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
 
 #### YEARS ####
 
-years = get_node_contents(".//year")
+years = get_node_contents(".//PubDate")
 table(years)
 ### 3 have no year.
 
