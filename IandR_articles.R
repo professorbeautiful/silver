@@ -21,9 +21,17 @@ get_nodes <- function(path=".//label") {
   sapply(record_nodes, xml_find_all, path) 
 }
 
-get_node_contents <- function(path=".//label", do.unlist=TRUE) {
+get_node_contents <- function(path=".//label", do.unlist=TRUE,
+                              selectFirst = FALSE) {
   the_nodes = get_nodes(path)
-  contents = sapply(the_nodes, xml_contents )
+  if(selectFirst)
+    contents = sapply(the_nodes, 
+                      function(node)
+                        xml_contents(node)[1] )
+  else 
+    contents = sapply(the_nodes, 
+                      function(node)
+                          paste(collapse='', as.vector(xml_contents(node) )) )
   empty = sapply(contents, length)==0
   contents[empty] = ''
   cat(length(contents) ,'\n')  ### OK,  668.
