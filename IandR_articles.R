@@ -47,11 +47,20 @@ title_list = get_node_contents(".//ArticleTitle", do.unlist = F)
 title_list_lengths = sapply( title_list, length) 
 table(title_list_lengths)
 titles = sapply(title_list, paste0, collapse = '')
+titles = gsub('<i>|</i>', '', titles)
 str(titles)
 
 #### ABSTRACTS ####
-abstracts = get_node_contents(".//abstract")
-length(abstracts)
+abstract_nodes = get_nodes(".//AbstractText")
+table(sapply(get_node_contents(".//AbstractText", do.unlist = F) , length) )
+abstract_list = get_node_contents(".//AbstractText", do.unlist = F)
+abstract_list_lengths = sapply( abstract_list, length) 
+table(abstract_list_lengths)
+
+abstracts = sapply(abstract_list, paste0, collapse = '')
+abstracts = as.vector(get_node_contents(".//AbstractText"))
+abstracts = gsub('<i>|</i>', '', abstracts)
+str(abstracts)
 
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
                         ignore.case=TRUE) > 0
@@ -63,6 +72,15 @@ mammaprint_in_Ti= regexpr(pattern='mammaprint|70 gene|70-gene', text = titles,
 mammaprint_in_Ab= regexpr(pattern='mammaprint|70 gene|70-gene', text = abstracts, 
                         ignore.case=TRUE) > 0
 mammaprint_in_TiAb = mammaprint_in_Ti | mammaprint_in_Ab
+
+#### Exploring problems with the TiAb classification.
+table(mammaprint_in_TiAb,oncotype_in_TiAb)
+titles[mammaprint_in_TiAb & oncotype_in_TiAb]  ### OK
+table(mammaprint_in_Ab,oncotype_in_Ab)
+
+titles[(!mammaprint_in_TiAb) & (!oncotype_in_TiAb)] [1] 
+abstracts[(!mammaprint_in_TiAb) & (!oncotype_in_TiAb)] [1] 
+pmid[(!mammaprint_in_TiAb) & (!oncotype_in_TiAb)] [1] 
 
 #### YEARS ####
 
@@ -109,8 +127,6 @@ table(assignments)  ### 334 each.
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 ### The written document looks good.
 ### But Mendeley is not doing the re-import correctly yet.
-write_xml(IR, 'exporting-from-R.xml')
-
 
 ##### EXPORTING #####
 library(openxlsx)
