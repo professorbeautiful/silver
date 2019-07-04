@@ -11,16 +11,17 @@ exclusion21clause = paste0('"', exclusions21, ' 21"[title/abstract]', collapse='
 
 queryOncotype  = paste('
 "loattrfree full text"[sb] 
-               AND English[lang]
-               AND breast[title/abstract] 
-               AND (cancer[title/abstract] or carcinoma[title/abstract])
-               AND (mammaprint [title/abstract] 
-                  OR 70-gene[title/abstract] 
-                  OR oncotype[title/abstract] 
-                  OR ("21-gene"[title/abstract] NOT ',
-                       exclusion21clause,
-                       ' NOT 2.7.1.21',
-                       ') )'
+ NOT review[filter]
+ AND English[lang]
+ AND breast[title/abstract] 
+ AND (cancer[title/abstract] or carcinoma[title/abstract])
+ AND (mammaprint [title/abstract] 
+      OR 70-gene[title/abstract] 
+      OR oncotype[title/abstract] 
+      OR ("21-gene"[title/abstract] NOT ',
+       exclusion21clause,
+       ' NOT 2.7.1.21',
+  ') )'
 )
 
 query = gsub('\n', ' ', queryOncotype)
@@ -30,7 +31,7 @@ write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 
 record_nodes = xml_find_all(IR, ".//PubmedArticle")
 length(record_nodes) 
-###  Lengths of the 454 (NOT 662) record nodesets.
+###  Lengths of the 407 (NOT 662) record nodesets.
 table(
   sapply(FUN = length, sapply(record_nodes, 
                               function(node)xml_children(xml_children(node))) )
