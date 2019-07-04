@@ -29,6 +29,8 @@ legend('topleft',
        col=legendColors
 )
 
+plot(ecdf(pubMedPubDate))
+
 
 #### why 2002 mammaprint and why 2020?
 titles[years<=2002]
