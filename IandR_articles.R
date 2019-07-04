@@ -133,24 +133,25 @@ table(assignments)  ### 334 each.
 
 
 #####  REMOVING pmid_to_remove ####
-which_to_remove = which(pmid==pmid_to_remove)
-xml_remove(record_nodes[which_to_remove])
-titles = titles[-which_to_remove]
-abstracts = abstracts[-which_to_remove]
-years = years[-which_to_remove]
-assignments = assignments[-which_to_remove]
-pmid = pmid[-which_to_remove]
-pmid_url = pmid_url[-which_to_remove]
-keywords = keywords[-which_to_remove]
-mammaprint_in_Ti = mammaprint_in_Ti[-which_to_remove]
-mammaprint_in_Ab = mammaprint_in_Ab[-which_to_remove]
-mammaprint_in_Kw = mammaprint_in_Kw[-which_to_remove]
-mammaprint_in_TiAbKw = mammaprint_in_TiAbKw[-which_to_remove]
-oncotype_in_Ti = oncotype_in_Ti[-which_to_remove]
-oncotype_in_Ab = oncotype_in_Ab[-which_to_remove]
-oncotype_in_Kw = oncotype_in_Kw[-which_to_remove]
-oncotype_in_TiAbKw = oncotype_in_TiAbKw[-which_to_remove]
-
+removeArticle = function(pmids_to_remove) {
+  which_to_remove = match(table = pmid, x = pmids_to_remove)
+  xml_remove(record_nodes[which_to_remove])
+  titles = titles[-which_to_remove]
+  abstracts = abstracts[-which_to_remove]
+  years = years[-which_to_remove]
+  assignments = assignments[-which_to_remove]
+  pmid = pmid[-which_to_remove]
+  pmid_url = pmid_url[-which_to_remove]
+  keywords = keywords[-which_to_remove]
+  mammaprint_in_Ti = mammaprint_in_Ti[-which_to_remove]
+  mammaprint_in_Ab = mammaprint_in_Ab[-which_to_remove]
+  mammaprint_in_Kw = mammaprint_in_Kw[-which_to_remove]
+  mammaprint_in_TiAbKw = mammaprint_in_TiAbKw[-which_to_remove]
+  oncotype_in_Ti = oncotype_in_Ti[-which_to_remove]
+  oncotype_in_Ab = oncotype_in_Ab[-which_to_remove]
+  oncotype_in_Kw = oncotype_in_Kw[-which_to_remove]
+  oncotype_in_TiAbKw = oncotype_in_TiAbKw[-which_to_remove]
+}
 
 #Finally, rewrite the xml doc.
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
