@@ -1,5 +1,10 @@
 ###  We need to re-read this file and reconstruct IR each time?
-library('xml2')
+
+library(pubmed.mineR)
+library(easyPubMed)
+library(rentrez)
+library(xml2)
+library(XML)
 #IR = read_xml('pubmed_result oncotype or mammaprint.xml')
 #str(IR)
 #IR[[1]]
