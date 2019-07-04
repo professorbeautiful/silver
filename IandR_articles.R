@@ -139,12 +139,23 @@ pubMedPubDate = ymd(
 
 #### PMID ####
 
-pmid = get_node_contents('.//PMID')
+pmidFull = get_node_contents('.//PMID')
+pmid = pmidFirst = get_node_contents('.//PMID', selectFirst = TRUE)
 pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
                   pmid, '%5Bpmid%5D')
 table(nchar(pmid))
 table(table(pmid))
 
+#### Investigate multiple PMIDS ####
+browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+                 "30003141", '%5Bpmid%5D'))
+browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+                 "28721379", '%5Bpmid%5D'))
+browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+                 "12490681", '%5Bpmid%5D'))
+browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+                 "12712998", '%5Bpmid%5D'))
+strsplit(pmid[407], split='........', perl=T)
 
 ####   Which are review articles?
 ####  Which are clinical articles (patient data focus)?
