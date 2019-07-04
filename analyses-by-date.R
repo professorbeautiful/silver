@@ -10,7 +10,8 @@ plotYears = function(subset) {
   if(missing(subset)) subset = pmid
   inSubset = pmid %in% subset
   plot(allyears, as.vector(table(years[inSubset])),
-       type='h', col='lightgrey' )
+       type='h', col='lightgrey' ,
+       xlab='year', ylab='article count')
   offset=0.2
   lwd = 2
   
