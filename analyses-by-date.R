@@ -42,3 +42,20 @@ launchPMID()  ### OK. really is MP.
 
 titles[years<=2004] ### must remove "metalloproteinase-21 gene" hits!
 
+selectionTable = table( mammaprint_in_TiAbKw, 
+                        oncotype_in_TiAbKw,
+                        years)
+tapply(pmid, INDEX=list(mammaprint_in_TiAbKw, 
+                        oncotype_in_TiAbKw,
+                        years), 
+       FUN= head, n=1)
+MaxNumPMID = 10
+pmidSelector = function(X)
+  sample(X, min(MaxNumPMID, length(X)), 
+         replace = FALSE)
+pmidSampleArray = tapply(pmid, INDEX=list(mammaprint_in_TiAbKw, 
+                        oncotype_in_TiAbKw,
+                        years), 
+       FUN= pmidSelector)
+unlist(pmidSampleArray)
+
