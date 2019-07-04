@@ -1,13 +1,36 @@
 ###  We need to re-read this file and reconstruct IR each time?
 library('xml2')
-IR = read_xml('pubmed_result oncotype or mammaprint.xml')
-str(IR)
-IR[[1]]
+#IR = read_xml('pubmed_result oncotype or mammaprint.xml')
+#str(IR)
+#IR[[1]]
+
+exclusions21 = c('ORF','IL', 'Interleukin', 'FGF', 'kinase',
+                 'kappa', 'mir', 'microrna', 'ighv3', 'factor', 'trisomy',
+                 'chromosome')
+exclusion21clause = paste0('"', exclusions21, ' 21"[title/abstract]', collapse=' NOT ')
+
+queryOncotype  = paste('
+"loattrfree full text"[sb] 
+               AND English[lang]
+               AND breast[title/abstract] 
+               AND (cancer[title/abstract] or carcinoma[title/abstract])
+               AND (mammaprint [title/abstract] 
+                  OR 70-gene[title/abstract] 
+                  OR oncotype[title/abstract] 
+                  OR ("21-gene"[title/abstract] NOT ',
+                       exclusion21clause,
+                       ' NOT 2.7.1.21',
+                       ') )'
+)
+
+query = gsub('\n', ' ', queryOncotype)
+otc_on_pubmed <- easyPubMed::get_pubmed_ids(query)
+IR <- read_xml(fetch_pubmed_data(otc_on_pubmed))
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
 
 record_nodes = xml_find_all(IR, ".//PubmedArticle")
 length(record_nodes) 
-###  Lengths of the 662 record nodesets.
+###  Lengths of the 454 (NOT 662) record nodesets.
 table(
   sapply(FUN = length, sapply(record_nodes, 
                               function(node)xml_children(xml_children(node))) )
@@ -48,6 +71,7 @@ title_list_lengths = sapply( title_list, length)
 table(title_list_lengths)
 titles = sapply(title_list, paste0, collapse = '')
 titles = gsub('<i>|</i>', '', titles)
+titles = as.vector(titles)
 str(titles)
 
 #### ABSTRACTS ####
@@ -60,6 +84,7 @@ table(abstract_list_lengths)
 abstracts = sapply(abstract_list, paste0, collapse = '')
 abstracts = as.vector(get_node_contents(".//AbstractText"))
 abstracts = gsub('<i>|</i>', '', abstracts)
+abstracts = as.vector(abstracts)
 str(abstracts)
 
 #### KEYWORDS ####
@@ -89,7 +114,8 @@ abstracts[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1]
 keywords[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
 pmid[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
 ### This one is selected by "21 gene" in the abstract, but it is a DIFFERENT set of genes!
-pmid_to_remove = pmid[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
+#DONE!
+#pmid_to_remove = pmid[(!mammaprint_in_TiAbKw) & (!oncotype_in_TiAbKw)] [1] 
 
 #### YEARS ####
 
