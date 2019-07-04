@@ -30,4 +30,13 @@ legend('topleft',
 )
 
 
-#### why 2002 and 2020?
+#### why 2002 mammaprint and why 2020?
+titles[years<=2002]
+abstracts[years==2002]  ###  Yes, 
+pmid[years==2002]  ###  Yes, 
+launchPMID = function(thispmid='12490681') 
+  browseURL(pmid_url[match(thispmid, pmid)])
+launchPMID()  ### OK. really is MP.
+
+titles[years<=2004] ### must remove "metalloproteinase-21 gene" hits!
+
