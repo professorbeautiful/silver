@@ -124,10 +124,10 @@ years = get_node_contents(".//PubMedPubDate//Year", selectFirst=TRUE)
 sum(table(years))
 table(years, exclude=NULL)  
 ### 24 article have no pub year but do have PubMedPubDate year.
-months = get_node_contents(".//PubMedPubDate//Month")
+months = get_node_contents(".//PubMedPubDate//Month", selectFirst=TRUE)
 table(months)
 sum(months=='')
-days = get_node_contents(".//PubMedPubDate//Day")
+days = get_node_contents(".//PubMedPubDate//Day", selectFirst=TRUE)
 sum(days=='')
 library(lubridate)
 pubMedPubDate = ymd(
