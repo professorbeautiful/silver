@@ -172,8 +172,13 @@ strsplit(pmid[407], split='........', perl=T)
 
 assignments = sample(rep(c('_Silver', '_Brass'), each=length(abstracts)/2),
                       replace=FALSE)
-table(assignments)  ### 334 each.
-
+assignments = rep(c('Silver', 'Brass'), times=length(abstracts)/2 + 1)
+if(length(titles) %% 2 == 1)  ### odd;  slice off the first assignment
+  assignments = assignments[-1]
+length(assignments)
+head(assignments)
+table(assignments)
+pbcopy(assignments)
 
 #####  REMOVING pmid_to_remove ####
 removeArticle = function(pmids_to_remove) {
