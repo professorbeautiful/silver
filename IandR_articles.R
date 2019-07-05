@@ -96,6 +96,15 @@ str(abstracts)
 #### KEYWORDS ####
 keywords = get_node_contents('.//Keyword', collapse=';')
 
+#### Concatenating titles, abstracts, keywords ####
+ti_ab_kw = apply(cbind(titles, abstracts, keywords), 1,
+                 paste, sep='|||')
+## This shows we really do need our eyeballs!
+titles[grep('sensitivity', ignore.case = T, titles)]
+###  But this kind of query could be a good check on our eyeballs.
+titles[grep('specificity', ignore.case = T, abstracts)]
+
+
 #### WHICH TESTS ####
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
                         ignore.case=TRUE) > 0
