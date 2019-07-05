@@ -63,7 +63,8 @@ pmidSelector = function(X)
   sample(X, min(MaxNumPMID, length(X)), 
          replace = FALSE)
 MaxNumPMID = 8  #### 10->243 articles, 9->231, 8->218
-saveSeed = .Random.seed
+savedSeed = .Random.seed
+dump('savedSeed', file = 'savedSeed.rda')
 pmidSampleArray = tapply(pmid, INDEX=list(mammaprint_in_TiAbKw, 
                         oncotype_in_TiAbKw,
                         years), 
