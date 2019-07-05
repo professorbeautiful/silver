@@ -63,12 +63,16 @@ pmidSelector = function(X)
   sample(X, min(MaxNumPMID, length(X)), 
          replace = FALSE)
 MaxNumPMID = 8  #### 10->243 articles, 9->231, 8->218
+saveSeed = .Random.seed
 pmidSampleArray = tapply(pmid, INDEX=list(mammaprint_in_TiAbKw, 
                         oncotype_in_TiAbKw,
                         years), 
        FUN= pmidSelector)
 pmidSample = unlist(pmidSampleArray)
 length(pmidSample)
+head(pmidSample)[1:2]
+pmidSampleSaved = pmidSample
+pbcopy(makeHyperlinks(pmidSampleSaved) )
 plotYears(pmidSample)
 abline(h=8, lty=2)
 title(paste('up to ', MaxNumPMID, ' per PMID group'))

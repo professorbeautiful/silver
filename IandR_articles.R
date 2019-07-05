@@ -159,9 +159,11 @@ pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
                   pmid, '%5Bpmid%5D')
 table(nchar(pmid))
 table(table(pmid))
-hyperlinks = paste0(
+hyperlinks
+makeHyperlinks = function(pmidlist) paste0(
   '=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=',
-  pmid, '%5Bpmid%5D", "', pmid, '")')
+  pmidlist, '%5Bpmid%5D", "', pmidlist, '")')
+hyperlinks = makeHyperlinks(pmidlist = pmid)
 grep('31174485', hyperlinks, v=T)
 print('=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=31174485%5Bpmid%5D","31174485")')
 
