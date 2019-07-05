@@ -150,6 +150,12 @@ pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
                   pmid, '%5Bpmid%5D')
 table(nchar(pmid))
 table(table(pmid))
+hyperlinks = paste0(
+  '=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+  pmid, '%5Bpmid%5D", "', pmid, '")')
+grep('31174485', hyperlinks, v=T)
+print('=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=31174485%5Bpmid%5D","31174485")')
+
 
 #### Investigate multiple PMIDS ####
 browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
