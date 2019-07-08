@@ -48,7 +48,7 @@ abstracts[years==2002]  ###  Yes,
 pmid[years==2002]  ###  Yes, 
 launchPMID = function(thispmid='12490681') 
   browseURL(pmid_url[match(thispmid, pmid)])
-launchPMID()  ### OK. really is MP.
+#launchPMID()  ### OK. really is MP.
 
 titles[years<=2004] ### must remove "metalloproteinase-21 gene" hits!
 
@@ -63,8 +63,9 @@ pmidSelector = function(X)
   sample(X, min(MaxNumPMID, length(X)), 
          replace = FALSE)
 MaxNumPMID = 8  #### 10->243 articles, 9->231, 8->218
-savedSeed = .Random.seed
-dump('savedSeed', file = 'savedSeed.rda')
+#savedSeed = .Random.seed
+#dump('savedSeed', file = 'savedSeed.rda')
+.Random.seed = savedSeed 
 pmidSampleArray = tapply(pmid, INDEX=list(mammaprint_in_TiAbKw, 
                         oncotype_in_TiAbKw,
                         years), 
