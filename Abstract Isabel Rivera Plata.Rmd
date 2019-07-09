@@ -1,0 +1,22 @@
+---
+title: "Abstract Isabel Rivera Plata"
+author: "Isabel Rivera Plata with Roger Day"
+date: "7/8/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## The introduction of genomic biomarkers for breast cancer
+
+```{r}
+library(readxl)
+gbs_all = readxl::read_excel('Gene biomarker survey.xlsx')
+gbs_all$ROW = 1:nrow(gbs_all)
+gbs_all = gbs_all[c(ncol(gbs_all), 1:(ncol(gbs_all)-1))]
+gbs = gbs_all[!is.na(gbs_all$STATUS) & (gbs_all$STATUS == 'DONE'),  ]
+```
+
