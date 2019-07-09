@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
+options(width=132)
 ```
 
 
@@ -17,7 +19,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ###   FIRST do this in the RStudio console:
 ###  save.image("~/Documents/Isabel Rivera Plata/.RData")  ---   Do NOT run this line in this document!
 
-attach('.RData')
+attach('.RData')   ### Making sure that 
 
 library(readxl)
 gbs_all = readxl::read_excel('Gene biomarker survey.xlsx')
@@ -37,6 +39,24 @@ We automated the extraction of `r length(titles)` relevant articles from PubMed 
 
 ### RESULTS
 
-The distribution of articles across time.
+The distribution of all the articles across time is :
 
-At this time the number of articles summarized is 
+```{r}
+testString = paste(mammaprint_in_TiAbKw,oncotype_in_TiAbKw)
+testString [ testString == "FALSE TRUE"]= "ODX"
+testString [ testString == "TRUE TRUE"]= "both"
+testString [ testString == "TRUE FALSE"]= "MP"
+table(testString[], years[])
+
+```
+
+At this time the number of articles that the team has summarized is 
+
+```{r}
+oneswehavedone = match(x = gbs$PMID, table = pmid) 
+table(testString[ oneswehavedone  ],
+      years[ oneswehavedone  ] )
+  
+```
+
+The first article introducing each test was 2002 for Mammaprint and 2004 for Oncotype DX. However, there was an explosion of articles on Oncotype DX in subsequent years. CHECK:  That explosion was not due to an accuulation of questions and answers about patients' clinical outcomes, but primarily focused on considerations of economic, usage of the test, effects on clinical decisions, confidence of doctor and patient, and similar directions. Mammaprint arose in Europe (Netherlands); differences in health systems may account for the focus on economics.
