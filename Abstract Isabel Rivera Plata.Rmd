@@ -20,3 +20,17 @@ gbs_all = gbs_all[c(ncol(gbs_all), 1:(ncol(gbs_all)-1))]
 gbs = gbs_all[!is.na(gbs_all$STATUS) & (gbs_all$STATUS == 'DONE'),  ]
 ```
 
+### BACKGROUND
+
+Biomarkers are a way in which we measure some aspects of disease to support clinical decisions. In the early 2000's, two gene expression-based biomarker tests, Oncotype DX and Mammaprint, were developed as prognostic assays for breast cancer with low risk of recurrence, to reduce unnecessary overtreatment with chemotherapy. We traced and compared the development of these two tests through the years using the research literature. Our main features of interest were the focus questions, study types, and effect measures. 
+
+
+### METHODS
+We automated the extraction of 668 relevant articles from PubMed into R via XML, did a stratified random selection of 218 articles, transferred their PubMed identifiers into a Google sheet, developed a data dictionary. Using the sheet we extracted the article features of interest manually. After manual extraction we summarized the patterns across time and the differences between the two tests. 
+
+
+### RESULTS
+
+The distribution of articles across time.
+
+At this time the number of articles summarized is 
