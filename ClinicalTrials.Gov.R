@@ -1,14 +1,18 @@
 
 # XML::xmlParse
 CTgovXMLstring = RCurl::getURL(
-  "https://clinicaltrials.gov/ct2/results?show_xprt=Y&xprt=cancer+AND+oncotype&displayxml=true&count=200"
+  paste0(
+  "https://clinicaltrials.gov/ct2/results?",
+  'show_xprt=Y&xprt=cancer+AND+',
+  "(oncotype+OR+mammaprint)&displayxml=true&count=200"
   )
+)
 
 CTgovXML = 
   xml2::read_xml(CTgovXMLstring)
 
 CTgovAsList = xml2::as_list(CTgovXML)
-length(CTgovAsList[[1]])  ## 39
+length(CTgovAsList[[1]])  ## 39 oncotype dx, 17 mammaprint, 6 both, total 50
 names(CTgovAsList[[1]] )
 
 CTgovAsList[[1]] [['query']] [[1]]
@@ -18,24 +22,35 @@ CTs = CTgovAsList[[1]] [-(1:4)]
 length(CTs)  ## 35
 CTs[[1]]
 names(CTs[[1]])
-browseURL(CTs[[1]]$url[[1]])
+#browseURL(CTs[[1]]$url[[1]])
 xml2::xml_find_all(CTgovXML, ".//title")
 
+### So 35 studies in cancer with oncotype dx.
 
-## Studies with results:
+## Only 3 studies have results, according to ClinicalTrials.Gov:
 CTgovXMLresults = 
-  xml2::read_xml(as_html = TRUE,
+  xml2::read_xml(#as_html = TRUE,
     RCurl::getURL(paste0(
 'https://clinicaltrials.gov/ct2/results?',
-'cond=breast+cancer&term=oncotype&type=&rslt=With'
+#'show_xprt=Y&xprt=',
+'displayxml=true',
+'cond=breast+cancer&term=oncotype+OR+mammaprint&type=&rslt=With'
 #,'&age_v=&gndr=&intr=&titles=&outc=&spons=&lead=&id=&cntry=&state=&city=&dist=&locn=&strd_s=&strd_e=&prcd_s=&prcd_e=&sfpd_s=&sfpd_e=&lupd_s=&lupd_e=&sort='
 )
 )
 )
+## Here are the titles. All 3 are for Oncotype DX ####
 xml2::xml_find_all(CTgovXMLresults, ".//title")
+## Here are all the tags ####
+unique(sort(sapply(xml2::xml_find_all(CTgovXMLresults, ".//*"),
+       xml2::xml_name)
+))
+xml2::xml_find_all(CTgovXMLresults, ".//intervention_summary
+                   ")
+sapply(xml2::xml_text(xml2::xml_find_all(CTgovXMLresults, ".//url")), browseURL,
+       browser = '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"')
 
-
-###  Below is older stuff.
+###  Below is older stuff. ####
 
 hasIntervention = sapply(
   getNodeSet(CTgovXML, "/search_results/clinical_study"),
