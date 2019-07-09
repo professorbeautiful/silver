@@ -14,6 +14,13 @@ options(width=132)
 
 ## The introduction of genomic biomarkers for breast cancer
 
+```{r googlesheets}
+library(googlesheets)
+my_gs_meta = gs_title('Gene biomarker survey')
+my_gs = gs_read(my_gs_meta, ws = 1)
+#  Almost -- some minor but critical serror.
+```
+
 ```{r}
 ###  CAUTION:
 ###   FIRST do this in the RStudio console:
