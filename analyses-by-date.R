@@ -9,7 +9,10 @@ table(match(years, allyears))
 plotYears = function(subset) {
   if(missing(subset)) subset = pmid
   inSubset = pmid %in% subset
-  plot(allyears, as.vector(table(years[inSubset])),
+  yeartable = sapply(allyears, function(y)
+    sum(years[inSubset] == y))
+  ## as.vector(table(years[inSubset]))
+  plot(allyears, yeartable,
        type='h', col='lightgrey' ,
        xlab='year', ylab='article count')
   offset=0.2
