@@ -51,7 +51,7 @@ We automated the extraction of `r length(titles)` relevant articles from PubMed 
 
 ### RESULTS
 
-The distribution of all the articles across time is :
+The distribution of all `r length(titles)` the articles across years is :
 
 ```{r}
 testString = paste(mammaprint_in_TiAbKw,oncotype_in_TiAbKw)
@@ -62,10 +62,15 @@ table(testString[], years[])
 
 ```
 
-At this time the number of articles that the team has summarized is 
+```{r}
+gs_done = my_gs[!is.na(my_gs$STATUS) & (my_gs$STATUS=='DONE') , ]
+
+```
+
+At the time of this report, the number of articles that the team has summarized is `r nrow(gs_done)`:
 
 ```{r}
-oneswehavedone = match(x = gbs$PMID, table = pmid) 
+oneswehavedone = match(x = gs_done$PMID, table = pmid) 
 table(testString[ oneswehavedone  ],
       years[ oneswehavedone  ] )
   
@@ -98,7 +103,6 @@ my_gs$abstract[my_gs$PMID %in% economics_mismatch]
 We detected several examples where our personal judgments classifications were correct in which an automated "bag-of-words" method would be incorrect.
 
 ```{r modeling,results=FALSE} 
-gs_done = my_gs[!is.na(my_gs$STATUS) & (my_gs$STATUS=='DONE') , ]
 table(gs_done$FOCUS)
 table(gs_done$year, exclude=NULL)
 
