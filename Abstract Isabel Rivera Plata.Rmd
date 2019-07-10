@@ -25,7 +25,7 @@ my_gs = data.frame(ROW=1:nrow(my_gs), my_gs)
 ```{r}
 ###  CAUTION:
 ###   FIRST do this in the RStudio console:
-###  save.image("~/Documents/Isabel Rivera Plata/.RData")  ---   Do NOT run this line in this document!
+###  save.image(".RData")  ---   Do NOT run this line in this document!
 
 attach('.RData')   ### Making sure that previously created objects are available.
 
