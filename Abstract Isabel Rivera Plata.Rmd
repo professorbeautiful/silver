@@ -72,7 +72,7 @@ table(testString[ oneswehavedone  ],
 ```
 
 The first article introducing each test was 2002 for Mammaprint and 2004 for Oncotype DX. However, there was an explosion of articles on Oncotype DX in subsequent years. CHECK:  That explosion was not due to an accuulation of questions and answers about patients' clinical outcomes, but primarily focused on considerations of economic, usage of the test, effects on clinical decisions, confidence of doctor and patient, and similar directions. Mammaprint arose in Europe (Netherlands); differences in health systems may account for the focus on economics.
-```{r}
+```{r year and economics,results=FALSE}
 my_gs$year = years[match(my_gs$PMID, pmid)]
 my_gs$title = titles[match(my_gs$PMID, pmid)]
 my_gs$abstract = abstracts[match(my_gs$PMID, pmid)]
@@ -96,7 +96,8 @@ my_gs$abstract[my_gs$PMID %in% economics_mismatch]
 
 ```
 We detected several examples where our personal judgments classifications were correct in which an automated "bag-of-words" method would be incorrect.
-```{r}
+
+```{r modeling,results=FALSE} 
 gs_done = my_gs[!is.na(my_gs$STATUS) & (my_gs$STATUS=='DONE') , ]
 table(gs_done$FOCUS)
 table(gs_done$year, exclude=NULL)
@@ -114,7 +115,7 @@ proportion_economic = function(year, subset=TRUE) {
 }
 proportion_economic(year='2009',
               subset=my_gs$Oncotype.DX..Mammaprint.=='"Mammaprint only (70 genes)"')
-plot(allyears, sapply(allyears, proportion_economic), xlab='year', ylab='proportion economic')
+# plot(allyears, sapply(allyears, proportion_economic), xlab='year', ylab='proportion economic')
 # plot(pch='m', col='red', allyears, 
 #        sapply(allyears, proportion_economic,
 #               subset=my_gs$Oncotype.DX..Mammaprint.=='"Mammaprint only (70 genes)"'), 
