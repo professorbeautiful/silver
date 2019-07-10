@@ -18,6 +18,7 @@ options(width=132)
 library(googlesheets)
 my_gs_meta = gs_title('Gene biomarker survey')
 my_gs = gs_read(my_gs_meta, ws = 1) [-1, ]
+my_gs = data.frame(ROW=1:nrow(my_gs), my_gs)
 #  Almost -- some minor but critical serror.
 ```
 
