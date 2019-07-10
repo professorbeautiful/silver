@@ -3,7 +3,6 @@ title: "Abstract Isabel Rivera Plata"
 author: "Isabel Rivera Plata with Roger Day"
 date: "7/8/2019"
 output:
-  word_document: default
   html_document: default
 ---
 
