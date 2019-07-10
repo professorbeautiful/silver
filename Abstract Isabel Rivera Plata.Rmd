@@ -2,7 +2,9 @@
 title: "Abstract Isabel Rivera Plata"
 author: "Isabel Rivera Plata with Roger Day"
 date: "7/8/2019"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -111,9 +113,9 @@ proportion_economic = function(year, subset=TRUE) {
 proportion_economic(year='2009',
               subset=my_gs$Oncotype.DX..Mammaprint.=='"Mammaprint only (70 genes)"')
 plot(allyears, sapply(allyears, proportion_economic), xlab='year', ylab='proportion economic')
-plot(pch='m', col='red', allyears, 
-       sapply(allyears, proportion_economic,
-              subset=my_gs$Oncotype.DX..Mammaprint.=='"Mammaprint only (70 genes)"'), 
-       xlab='year', ylab='proportion economic')
+# plot(pch='m', col='red', allyears, 
+#        sapply(allyears, proportion_economic,
+#               subset=my_gs$Oncotype.DX..Mammaprint.=='"Mammaprint only (70 genes)"'), 
+#        xlab='year', ylab='proportion economic')
 ```
 
