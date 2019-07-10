@@ -185,14 +185,14 @@ print('=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=31174485%5Bpmid%5D"
 
 
 #### Investigate multiple PMIDS ####
-browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
-                 "30003141", '%5Bpmid%5D'))
-browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
-                 "28721379", '%5Bpmid%5D'))
-browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
-                 "12490681", '%5Bpmid%5D'))
-browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
-                 "12712998", '%5Bpmid%5D'))
+# browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+#                  "30003141", '%5Bpmid%5D'))
+# browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+#                  "28721379", '%5Bpmid%5D'))
+# browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+#                  "12490681", '%5Bpmid%5D'))
+# browseURL(paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+#                  "12712998", '%5Bpmid%5D'))
 strsplit(pmid[407], split='........', perl=T)
 
 ####   Which are review articles?
