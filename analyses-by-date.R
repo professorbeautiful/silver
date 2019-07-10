@@ -68,6 +68,7 @@ pmidSelector = function(X)
 MaxNumPMID = 8  #### 10->243 articles, 9->231, 8->218
 #savedSeed = .Random.seed
 #dump('savedSeed', file = 'savedSeed.rda')
+source(file = 'savedSeed.rda', local=TRUE)
 .Random.seed = savedSeed 
 pmidSampleArray = tapply(pmid, INDEX=list(mammaprint_in_TiAbKw, 
                         oncotype_in_TiAbKw,
