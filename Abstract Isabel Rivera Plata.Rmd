@@ -27,11 +27,11 @@ rm(list=ls())
 attach('.RData')   ### Making sure that previously created objects are available.
 ```
 
-## The introduction of genomic biomarkers for breast cancer
+
 
 ```{r googlesheets,results='hide',message=FALSE, warnings=FALSE}
-library(googlesheets)
 options(warn=-1)
+library(googlesheets)
 my_gs_meta = invisible(gs_title('Gene biomarker survey'))
 my_gs = invisible(gs_read(my_gs_meta, ws = 1) [-1, ])
 my_gs = invisible(data.frame(ROW=1:nrow(my_gs), my_gs))
