@@ -113,7 +113,6 @@ pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
                   pmid, '%5Bpmid%5D')
 table(nchar(pmid))
 table(table(pmid))
-hyperlinks
 makeHyperlinks = function(pmidlist) paste0(
   '=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=',
   pmidlist, '%5Bpmid%5D", "', pmidlist, '")')
@@ -212,7 +211,7 @@ if(length(titles) %% 2 == 1)  ### odd;  slice off the first assignment
 length(assignments)
 head(assignments)
 table(assignments)
-pbcopy(assignments)
+#pbcopy(assignments)
 
 #####  REMOVING pmid_to_remove ####
 removeArticle = function(pmids_to_remove) {
