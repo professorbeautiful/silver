@@ -105,6 +105,23 @@ titles[grep('sensitivity', ignore.case = T, titles)]
 titles[grep('specificity', ignore.case = T, abstracts)]
 
 
+#### PMID ####
+
+pmidFull = get_node_contents('.//PMID')
+pmid = pmidFirst = get_node_contents('.//PMID', selectFirst = TRUE)
+pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+                  pmid, '%5Bpmid%5D')
+table(nchar(pmid))
+table(table(pmid))
+hyperlinks
+makeHyperlinks = function(pmidlist) paste0(
+  '=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=',
+  pmidlist, '%5Bpmid%5D", "', pmidlist, '")')
+hyperlinks = makeHyperlinks(pmidlist = pmid)
+grep('31174485', hyperlinks, v=T)
+print('=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=31174485%5Bpmid%5D","31174485")')
+
+
 #### WHICH TESTS ####
 oncotype_in_Ti= regexpr(pattern='oncotype|21 gene|21-gene', text = titles, 
                         ignore.case=TRUE) > 0
@@ -159,7 +176,7 @@ pmid_url = paste0('https://www.ncbi.nlm.nih.gov/pubmed/?term=',
                   pmid, '%5Bpmid%5D')
 table(nchar(pmid))
 table(table(pmid))
-hyperlinks
+
 makeHyperlinks = function(pmidlist) paste0(
   '=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/?term=',
   pmidlist, '%5Bpmid%5D", "', pmidlist, '")')
