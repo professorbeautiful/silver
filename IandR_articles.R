@@ -31,8 +31,11 @@ queryOncotype  = paste('
 
 query = gsub('\n', ' ', queryOncotype)
 otc_on_pubmed <- easyPubMed::get_pubmed_ids(query)
-IR <- read_xml(fetch_pubmed_data(otc_on_pubmed))
+IR <- (easyPubMed::fetch_pubmed_data(otc_on_pubmed))
+IR <- xml2::read_xml(IR)
 write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
+
+allNodeNames = sort(unique(xml2::xml_name(xml_find_all(x = IR, xpath = './/*'))) )
 
 record_nodes = xml_find_all(IR, ".//PubmedArticle")
 length(record_nodes) 
