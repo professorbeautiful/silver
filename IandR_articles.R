@@ -257,10 +257,21 @@ system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
 #  314 
 IdType_nodes = xml2::xml_find_all(IR, xpath='//@IdType')
 sort(unique(as.character(IdType_nodes)))
-whichArePMC = XML::
-  #xml2::xml_find_all(IR, xpath='//@IdType="pmc"')
-  #xml2::xml_find_all(IR, xpath="//@IdType='pmc'")
-  XML::getNodeSet(IR, path='//@IdType="pmc"')
+PMCnodes = 
+  IdType_nodes[as.character(IdType_nodes)==" IdType=\"pmc\""]
+length(PMCnodes)   ### 314
+PMCstrings = sapply(PMCnodes, function(node) xml_text(xml_parent(node)))
+
+EIdType_nodes = xml2::xml_find_all(IR, xpath='//@EIdType')
+DOInodes = 
+  EIdType_nodes[as.character(EIdType_nodes)
+                    ==" EIdType=\"doi\""]
+length(DOInodes)   ### 351
+### The following things don't work.
+  # xml2::xml_find_all(IR, xpath='//@IdType="pmc"')
+  # xml2::xml_find_all(IR, xpath="//@IdType='pmc'")
+  # xml2::xml_find_all(IR, xpath="//@IdType=pmc")
+  #  XML::getNodeSet(IR, path='@IdType="pmc"')
   
 
 #https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5590847/
@@ -268,8 +279,9 @@ whichArePMC = XML::
 #https://www.ncbi.nlm.nih.gov/pmc/articles/pmid/27634691/
 
   ### check out the doi and pii nodes too.
-
-pmcid = 
 fulltextURLs = paste0('https://www.ncbi.nlm.nih.gov/pmc/articles/', pmid)
+
+pmcid = paste0('https://www.ncbi.nlm.nih.gov/pmc/articles/', pmid)
+
 #RCurl::curl
 firstarticle = xml2::curl_download(fulltextURLs[1])
