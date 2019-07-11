@@ -251,3 +251,25 @@ write.table(IR.df, file = 'IR.df.tabsv.xls', sep='\t', row.names = F)
 #  
 system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
 #system('open IR.df.tabsv.xls')
+
+## <ArticleId IdType="pmc">PMC5590847</ArticleId>
+#grep 'IdType="pmc"' exporting-from-R.xml |wc
+#  314 
+IdType_nodes = xml2::xml_find_all(IR, xpath='//@IdType')
+sort(unique(as.character(IdType_nodes)))
+whichArePMC = XML::
+  #xml2::xml_find_all(IR, xpath='//@IdType="pmc"')
+  #xml2::xml_find_all(IR, xpath="//@IdType='pmc'")
+  XML::getNodeSet(IR, path='//@IdType="pmc"')
+  
+
+#https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5590847/
+#https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5178139/
+#https://www.ncbi.nlm.nih.gov/pmc/articles/pmid/27634691/
+
+  ### check out the doi and pii nodes too.
+
+pmcid = 
+fulltextURLs = paste0('https://www.ncbi.nlm.nih.gov/pmc/articles/', pmid)
+#RCurl::curl
+firstarticle = xml2::curl_download(fulltextURLs[1])
