@@ -300,13 +300,15 @@ table(DOIurls!='')
   # xml2::xml_find_all(IR, xpath="//@IdType=pmc")
   #  XML::getNodeSet(IR, path='@IdType="pmc"')
   #  DOIparent = xmlAncestors(DOInodes[[1]])
-
+### CAUTION: FOR DOI'S generally have to follow redirects.
+### browseURL will work, but:  
+firstarticle = RCurl::getURL(DOIurls[1])   ### Redirect
+### so, we will have to scrape out the correct URL from the initial fetch.
+realURL = gsub("Handle Redirect", '', xml_text(read_xml(firstarticle)))
+firstarticle = read_html(RCurl::getURL(realURL))  
 
 ### check out the pii nodes too.  ####
+table(PMCurls!='', DOIurls!='') ### still 29 missing
+pmid[PMCurls=='' & DOIurls==''] 
+## For the first one, theren IS a full text url: https://docs.google.com/viewer?url=https%3A%2F%2Fwww.jbuon.com%2Farchive%2F23-5-1297.pdf&pdf=true
 
-
-
-#RCurl::curl
-firstarticle = RCurl::getURL(fulltextURLs[1])  ### not found
-firstarticle = RCurl::getURL(DOIurls[1])   ### Redirect
- 
