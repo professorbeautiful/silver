@@ -253,36 +253,60 @@ write.table(IR.df, file = 'IR.df.tabsv.xls', sep='\t', row.names = F)
 system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
 #system('open IR.df.tabsv.xls')
 
-## <ArticleId IdType="pmc">PMC5590847</ArticleId>
-#grep 'IdType="pmc"' exporting-from-R.xml |wc
-#  314 
+
+## Obtaining FULL TEXT addresses ####
+###   PMC DOI and PII strings.
+#grep 'IdType="pmc"' exporting-from-R.xml |wc  #  314 
+#grep 'IdType="doi"' exporting-from-R.xml |wc  #  739!  
 IdType_nodes = xml2::xml_find_all(IR, xpath='//@IdType')
 sort(unique(as.character(IdType_nodes)))
+### PMC addresses ####
 PMCnodes = 
   IdType_nodes[as.character(IdType_nodes)==" IdType=\"pmc\""]
 length(PMCnodes)   ### 314
 PMCstrings = sapply(PMCnodes, function(node) xml_text(xml_parent(node)))
-
+PMCurls = rep("", length(pmid))
+names(PMCurls) = pmid
+pmidsForPMCs = sapply(PMCnodes, function(node)
+  xml_text(xml_find_first(xml_parents(node)[[4]], './/PMID')))
+PMCurls[pmidsForPMCs] = paste(sep='/', 
+                              'https://www.ncbi.nlm.nih.gov/pmc/articles',
+                              PMCstrings)
+sum(PMCurls!='')   ### 314, as expected.
+titles[250]
+browseURL(PMCurls[250])
+#### DOI addresses ####
 EIdType_nodes = xml2::xml_find_all(IR, xpath='//@EIdType')
 DOInodes = 
   EIdType_nodes[as.character(EIdType_nodes)
                     ==" EIdType=\"doi\""]
 length(DOInodes)   ### 351
-### The following things don't work.
+## articles corresponding to DOInodes: ####
+# First, the pmid corresponding to a DOI node:
+pmidsForDOIs = sapply(DOInodes, function(node)
+  xml_text(xml_find_first(xml_parents(node)[[4]], './/PMID')))
+DOIurls = rep("", length(pmid))
+names(DOIurls) = pmid
+DOIstrings = sapply(DOInodes, function(node) xml_text(xml_parent(node)))
+DOIurls[pmidsForDOIs] = paste(sep='/', 'https://doi.org', DOIstrings)
+sum(DOIurls!='')   ### 351, as expected.
+## Spot check
+titles[300]
+browseURL(DOIurls[300])  ### OK for 100,200,300  
+table(DOIurls!='')
+### For the record, the following things don't work.
   # xml2::xml_find_all(IR, xpath='//@IdType="pmc"')
   # xml2::xml_find_all(IR, xpath="//@IdType='pmc'")
   # xml2::xml_find_all(IR, xpath="//@IdType=pmc")
   #  XML::getNodeSet(IR, path='@IdType="pmc"')
-  
+  #  DOIparent = xmlAncestors(DOInodes[[1]])
 
-#https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5590847/
-#https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5178139/
-#https://www.ncbi.nlm.nih.gov/pmc/articles/pmid/27634691/
 
-  ### check out the doi and pii nodes too.
-fulltextURLs = paste0('https://www.ncbi.nlm.nih.gov/pmc/articles/', pmid)
+### check out the pii nodes too.  ####
 
-pmcid = paste0('https://www.ncbi.nlm.nih.gov/pmc/articles/', pmid)
+
 
 #RCurl::curl
-firstarticle = xml2::curl_download(fulltextURLs[1])
+firstarticle = RCurl::getURL(fulltextURLs[1])  ### not found
+firstarticle = RCurl::getURL(DOIurls[1])   ### Redirect
+ 
