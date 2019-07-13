@@ -256,9 +256,10 @@ system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
 
 ## Obtaining FULL TEXT addresses ####
 ###   PMC DOI and PII strings.
-#grep 'IdType="pmc"' exporting-from-R.xml |wc  #  314 
-#grep 'IdType="doi"' exporting-from-R.xml |wc  #  739!  
-#grep 'IdType="pii"' exporting-from-R.xml |wc  #  326!  
+EIdType_nodes = xml2::xml_find_all(IR, xpath='//@EIdType')
+# grep 'IdType="pmc"' exporting-from-R.xml |wc  #  314 
+# grep 'IdType="doi"' exporting-from-R.xml |wc  #  739!  
+# grep 'IdType="pii"' exporting-from-R.xml |wc  #  326!  
 IdType_nodes = xml2::xml_find_all(IR, xpath='//@IdType')
 sort(unique(as.character(IdType_nodes)))
 ### PMC addresses ####
@@ -277,7 +278,6 @@ sum(PMCurls!='')   ### 314, as expected.
 titles[250]
 browseURL(PMCurls[250])
 #### DOI addresses ####
-EIdType_nodes = xml2::xml_find_all(IR, xpath='//@EIdType')
 DOInodes = 
   EIdType_nodes[as.character(EIdType_nodes)
                     ==" EIdType=\"doi\""]
@@ -313,6 +313,42 @@ DOIrealURLs = sapply(doiRetrievals,
                        gsub("Handle Redirect", '', xml_text(read_xml(doi1))) )
 
 ### check out the pii nodes too.  ####
+#### DOI addresses ####
+DOInodes = 
+  EIdType_nodes[as.character(EIdType_nodes)
+                ==" EIdType=\"doi\""]
+length(DOInodes)   ### 351
+## articles corresponding to DOInodes: ####
+# First, the pmid corresponding to a DOI node:
+pmidsForDOIs = sapply(DOInodes, function(node)
+  xml_text(xml_find_first(xml_parents(node)[[4]], './/PMID')))
+DOIurls = rep("", length(pmid))
+names(DOIurls) = pmid
+DOIstrings = sapply(DOInodes, function(node) xml_text(xml_parent(node)))
+DOIurls[pmidsForDOIs] = paste(sep='/', 'https://doi.org', DOIstrings)
+sum(DOIurls!='')   ### 351, as expected.
+
+#### PII addresses ####
+### https://en.wikipedia.org/wiki/Publisher_Item_Identifier
+PIInodes = 
+  EIdType_nodes[as.character(EIdType_nodes)
+                ==" EIdType=\"pii\""]
+length(PIInodes)   ### 36
+## articles corresponding to PIInodes: ####
+# First, the pmid corresponding to a PII node:
+pmidsForPIIs = sapply(PIInodes, function(node)
+  xml_text(xml_find_first(xml_parents(node)[[4]], './/PMID')))
+PIIurls = rep("", length(pmid))
+names(PIIurls) = pmid
+PIIstrings = sapply(PIInodes, function(node) xml_text(xml_parent(node)))
+PIIurls[pmidsForPIIs] = paste(sep='/', 
+                              'http://linkinghub.elsevier.com/retrieve/pii/', PIIstrings)
+sum(PIIurls!='')   ### 36, as expected.
+browseURL(PIIurls[pmidsForPIIs[1]])
+#### Not clear yet how to use PIIs for full text.
+
+
+## Consolidate the full text urls ####
 table(PMCurls!='', DOIurls!='') ### still 29 missing
 pmid[PMCurls=='' & DOIurls==''] 
 ## For the first one, there IS a full text url: https://docs.google.com/viewer?url=https%3A%2F%2Fwww.jbuon.com%2Farchive%2F23-5-1297.pdf&pdf=true
