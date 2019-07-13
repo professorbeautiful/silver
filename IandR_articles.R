@@ -35,7 +35,10 @@ IR <- (easyPubMed::fetch_pubmed_data(otc_on_pubmed))
 IR <- xml2::read_xml(IR)
 
 #write_xml(IR, 'exporting-from-R.xml', format_whitespace=TRUE)
+
+#### Read IR from disk (no re-loading from web is needed) ####
 IR = xml2::read_xml('exporting-from-R.xml')
+
 allNodeNames = sort(unique(xml2::xml_name(xml_find_all(x = IR, xpath = './/*'))) )
 
 record_nodes = xml_find_all(IR, ".//PubmedArticle")
