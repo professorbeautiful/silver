@@ -258,6 +258,7 @@ system('cat IR.df.tabsv.xls | pbcopy')  ### Works in MacBook.
 ###   PMC DOI and PII strings.
 #grep 'IdType="pmc"' exporting-from-R.xml |wc  #  314 
 #grep 'IdType="doi"' exporting-from-R.xml |wc  #  739!  
+#grep 'IdType="pii"' exporting-from-R.xml |wc  #  326!  
 IdType_nodes = xml2::xml_find_all(IR, xpath='//@IdType')
 sort(unique(as.character(IdType_nodes)))
 ### PMC addresses ####
@@ -300,15 +301,59 @@ table(DOIurls!='')
   # xml2::xml_find_all(IR, xpath="//@IdType=pmc")
   #  XML::getNodeSet(IR, path='@IdType="pmc"')
   #  DOIparent = xmlAncestors(DOInodes[[1]])
-### CAUTION: FOR DOI'S generally have to follow redirects.
+### CAUTION: FOR DOI'S generally have to follow redirects. ####
 ### browseURL will work, but:  
-firstarticle = RCurl::getURL(DOIurls[1])   ### Redirect
+weNeedDOI = PMCurls=='' & DOIurls!=''    ### 64 of them.
+doiRetrievals = sapply(DOIurls[weNeedDOI], 
+                      function(DOIurl) RCurl::getURL(DOIurl)  )  ### Redirections
+### We only need them for the ones PMC doesn't have.
 ### so, we will have to scrape out the correct URL from the initial fetch.
-realURL = gsub("Handle Redirect", '', xml_text(read_xml(firstarticle)))
-firstarticle = read_html(RCurl::getURL(realURL))  
+DOIrealURLs = sapply(doiRetrievals,
+                     function(doi1)
+                       gsub("Handle Redirect", '', xml_text(read_xml(doi1))) )
 
 ### check out the pii nodes too.  ####
 table(PMCurls!='', DOIurls!='') ### still 29 missing
 pmid[PMCurls=='' & DOIurls==''] 
-## For the first one, theren IS a full text url: https://docs.google.com/viewer?url=https%3A%2F%2Fwww.jbuon.com%2Farchive%2F23-5-1297.pdf&pdf=true
+## For the first one, there IS a full text url: https://docs.google.com/viewer?url=https%3A%2F%2Fwww.jbuon.com%2Farchive%2F23-5-1297.pdf&pdf=true
+browseURL(pmid_url[pmid==pmid[PMCurls=='' & DOIurls==''] [1] ])
+titles[pmid==pmid[PMCurls=='' & DOIurls==''] [1]]  ### ok, right one.
+## This one I can't extract the full text link from the pubmed page.
+## Let's give up on the 29 missing
 
+fulltextURLs = PMCurls
+fulltextURLs[weNeedDOI] = DOIrealURLs[weNeedDOI] 
+table(fulltextURLs=='')  ### yup, 29 missing.
+
+wordIncidence = function(word, this_pmid=pmid[1],
+                         check=c('titles', 'abstracts', 'fulltextURLs'),
+                         ...) {
+  this_pmid_number= match(this_pmid, pmid)
+  answers = list()
+  if(!is.na(pmatch('t', check)) )
+    answers[['t']] = regexpr(word, titles[this_pmid_number], ...)
+  if(!is.na(pmatch('a', check)) )
+    answers[['a']] = regexpr(word, abstracts[this_pmid_number], ...)
+  if(!is.na(pmatch('f', check)) ) {
+    fulltext = try(RCurl::getURLContent(fulltextURLs[this_pmid_number]) )
+    answers[['f']] = regexpr(word, fulltext, ...)
+    if(length(this_pmid) == 1) ### write the fulltext to .GlobalEnv
+      fulltext <<- fulltext
+  }
+  return(answers)
+}
+
+wordIncidence(word = 'Oncotype')
+### first pmid:  hits only in full text
+browseURL(fulltextURLs[1])
+### Aha, so this is https://www.journalslibrary.nihr.ac.uk/hta/hta23300#/abstract
+## which is a full report site. Still need to scrape the 
+## The string oncotype appears in abstract only because we removed the italics!
+##  and Oncotype does not.... not capitalized in the abstract!
+## And, lo, OncotypeDX appears in metadata for the page!
+substr(fulltext[1], start = 16000, stop=16090)
+
+
+
+##  But it's 
+##  
