@@ -78,6 +78,10 @@ pmidSample = unlist(pmidSampleArray)
 length(pmidSample)
 head(pmidSample)[1:2]
 pmidSampleSaved = pmidSample
+inSample = pmid %in% pmidSample
+### To get the row in the spreadsheet, add 1.
+sampleIndex = function(indexInFullSet)
+  sum(inSample[1:indexInFullSet])
 pbcopy(makeHyperlinks(pmidSampleSaved) )
 plotYears(pmidSample)
 abline(h=8, lty=2)
