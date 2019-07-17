@@ -280,7 +280,7 @@ PMCurls[pmidsForPMCs] = paste(sep='/',
 sum(PMCurls!='')   ### 314, as expected.
 titles[250]
 browseURL(PMCurls[250])
-#### DOI addresses ####
+#### DOI addresses Digital Object Identifier ####
 DOInodes = 
   EIdType_nodes[as.character(EIdType_nodes)
                     ==" EIdType=\"doi\""]
