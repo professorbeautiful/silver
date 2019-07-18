@@ -31,6 +31,9 @@ focusWords = unique(unlist(strsplit(focusWords, split='[ :]')))
 focusWords = focusWords[!is.na(focusWords)]
 focusWords = focusWords[nchar(focusWords)>2]
 length(focusWords)  ## 40 for FOCUS.
+letsChopTheS = c(13, 27)
+focusWords[letsChopTheS] = sub('s$', '', focusWords[letsChopTheS] )
+focusWords = c(focusWords, 'cost', 'outcome')
 
 #### incidence counts for titles
 titleFocusMatrix = as.data.frame(sapply(
