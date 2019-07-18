@@ -48,13 +48,8 @@ View(titleFocusMatrix)
 sapply(titleFocusMatrix, table)
 
 names(ourNotes)
-table(ourNotes$FOCUS)
-
-#### logistic regression ####
-dataForEconomics = data.frame(isEconomics=ourNotes$FOCUS=='Economics', 
-                titleFocusMatrix[pmidSample, ])
-### check it!  
-dataForEconomics
-fullModelForEconomics = glm(,
-                            isEconomics ~ ., family=binomial)
-                            step()
+ourNotes$notRelevant = (ourNotes$STATUS=='DONE; NOT RELEVANT' | ourNotes$FOCUS=='NOT RELEVANT')
+ourNotes$Done = !is.na(ourNotes$STATUS) & (ourNotes$STATUS!='in progress...')
+table(ourNotes$notRelevant, exclude=NULL)
+table(ourNotes$Done, exclude=NULL)
+ourNotes[is.na(ourNotes$notRelevant & !is.na(ourNotes$Done)), 'PMID']
