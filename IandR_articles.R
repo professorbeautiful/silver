@@ -394,5 +394,3 @@ substr(fulltext[1], start = 16000, stop=16090)
 
 
 
-##  But it's 
-##  
