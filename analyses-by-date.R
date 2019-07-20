@@ -89,6 +89,7 @@ abline(h=8, lty=2)
 title(paste('up to ', MaxNumPMID, ' per PMID group'))
 
 
+plotYears()
 mammaPrintByYear = selectionTable[2, 1, ]
 oncotypePrintByYear = selectionTable[1, 2, ]
 cbind(oncotypePrintByYear)
@@ -100,10 +101,10 @@ dataForYearStudy = data.frame(count= unlist(yearMerge[-1]))
 dataForYearStudy$year = c(yearMerge$year,yearMerge$year)
 dataForYearStudy$test = rep(c('mp', 'odx'), each=17)
 dataForYearStudy
-lines(dataForYearStudy$year[dataForYearStudy$test=='mp'], 
-      dataForYearStudy$count[dataForYearStudy$test=='mp'], col='red')
-lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
-      dataForYearStudy$count[dataForYearStudy$test=='odx'], col='green')
+# lines(dataForYearStudy$year[dataForYearStudy$test=='mp'], 
+#       dataForYearStudy$count[dataForYearStudy$test=='mp'], col='red')
+# lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
+#       dataForYearStudy$count[dataForYearStudy$test=='odx'], col='green')
 glm.out.dataForYearStudy = glm(data=dataForYearStudy,
     count ~ year * test, family=poisson)
 summary(glm.out.dataForYearStudy)
@@ -112,3 +113,4 @@ lines(dataForYearStudy$year[dataForYearStudy$test=='mp'],
       predictions[dataForYearStudy$test=='mp'], col='red', lwd=2)
 lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
       predictions[dataForYearStudy$test=='odx'], col='green', lwd=2)
+title('Poisson regression')
