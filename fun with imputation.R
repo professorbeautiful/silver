@@ -101,8 +101,8 @@ sapply(glmResults, function(result)
 multipleImputationMeanVariance = function(results=glmResults){
   nReps = length(results)
   summaries = lapply(results, summary)
-  estimates = sapply(summaries, function(summary) (summary$coef) [-1, 1])
-  stdErrors = sapply(summaries, function(summary) (summary$coef) [-1, 2])
+  estimates = sapply(summaries, function(summary) (summary$coef) [-1, 1, drop=F])
+  stdErrors = sapply(summaries, function(summary) (summary$coef) [-1, 2, drop=F])
   theMeans = apply(estimates, 1, mean)
   within = apply(stdErrors^2, 1, mean)
   between = apply(estimates, 1, var)
@@ -110,3 +110,7 @@ multipleImputationMeanVariance = function(results=glmResults){
             mImpVariance = within + (nReps+1)/nReps*between))
 }
 multipleImputationMeanVariance()
+
+multipleImputationMeanVariance(results = doImputation(ourFormula=imputedValuesForIsEconomics
+                               ~ as.numeric(years)) )
+
