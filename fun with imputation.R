@@ -101,13 +101,15 @@ sapply(glmResults, function(result)
 multipleImputationMeanVariance = function(results=glmResults){
   nReps = length(results)
   summaries = lapply(results, summary)
-  estimates = sapply(summaries, function(summary) (summary$coef) [-1, 1, drop=F])
-  stdErrors = sapply(summaries, function(summary) (summary$coef) [-1, 2, drop=F])
+  estimates = sapply(summaries, function(summary) (summary$coef) [, 1, drop=F])
+  stdErrors = sapply(summaries, function(summary) (summary$coef) [, 2, drop=F])
   theMeans = apply(estimates, 1, mean)
   within = apply(stdErrors^2, 1, mean)
   between = apply(estimates, 1, var)
-  return( cbind(theMeans, within = within, between = between,
-            mImpVariance = within + (nReps+1)/nReps*between))
+  return( data.frame(theMeans, within = within, between = between,
+            mImpVariance = within + (nReps+1)/nReps*between,
+            row.names = row.names(summaries[[1]]$coefficients))
+  )
 }
 multipleImputationMeanVariance()
 
