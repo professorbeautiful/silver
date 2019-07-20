@@ -42,6 +42,7 @@ plotYears = function(subset) {
 plotYears()
 
 
+
 plot(ecdf(pubMedPubDate))
 
 
@@ -86,3 +87,28 @@ pbcopy(makeHyperlinks(pmidSampleSaved) )
 plotYears(pmidSample)
 abline(h=8, lty=2)
 title(paste('up to ', MaxNumPMID, ' per PMID group'))
+
+
+mammaPrintByYear = selectionTable[2, 1, ]
+oncotypePrintByYear = selectionTable[1, 2, ]
+cbind(oncotypePrintByYear)
+yearMerge = merge(
+  data.frame(mp = mammaPrintByYear, year = as.numeric(names(mammaPrintByYear))),
+  data.frame(odx = oncotypePrintByYear, year = as.numeric(names(oncotypePrintByYear)))
+)
+dataForYearStudy = data.frame(count= unlist(yearMerge[-1]))
+dataForYearStudy$year = c(yearMerge$year,yearMerge$year)
+dataForYearStudy$test = rep(c('mp', 'odx'), each=17)
+dataForYearStudy
+lines(dataForYearStudy$year[dataForYearStudy$test=='mp'], 
+      dataForYearStudy$count[dataForYearStudy$test=='mp'], col='red')
+lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
+      dataForYearStudy$count[dataForYearStudy$test=='odx'], col='green')
+glm.out.dataForYearStudy = glm(data=dataForYearStudy,
+    count ~ year * test, family=poisson)
+summary(glm.out.dataForYearStudy)
+predictions = exp(predict(glm.out.dataForYearStudy))
+lines(dataForYearStudy$year[dataForYearStudy$test=='mp'], 
+      predictions[dataForYearStudy$test=='mp'], col='red', lwd=2)
+lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
+      predictions[dataForYearStudy$test=='odx'], col='green', lwd=2)
