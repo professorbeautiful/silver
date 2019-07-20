@@ -17,22 +17,18 @@ titles[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ]
 dataForFocus$PMID[dataForFocus$isEconomics] [1]
 pmid[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ] [1]
 sort(pmid[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ]) [1]
-####  Using imputationMerge defined below:
-imputationMerge$titles[sapply(imputationMerge$isEconomics, isTRUE)]
-sort(imputationMerge$titles[sapply(imputationMerge$isEconomics, isTRUE)]) ==
-  sort(titles[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ] )
-####  OK we're all set now.  Remember to use isTRUE for booleans:  isTRUE(NA) is FALSE! ####
+####  Using imputationMerge defined below, it will be ok.
 
-table(years[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]])  ### First one in 2005
-table(oncotype_in_TiAbKw[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]],
-      mammaprint_in_TiAbKw[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]],
-      dnn = c('ODX', 'MP')
-)  
-
-#### so why is this wrong?  ####
-table(years[pmid %in% dataForFocus$PMID], dataForFocus$FOCUS)
-head(cbind(pmid[pmid %in% dataForFocus$PMID], dataForFocus$PMID) )  ### yup, wrong! 
-
+# table(years[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]])  ### First one in 2005
+# table(oncotype_in_TiAbKw[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]],
+#       mammaprint_in_TiAbKw[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]],
+#       dnn = c('ODX', 'MP')
+# )  
+# 
+# #### so why is this wrong?  ####
+# table(years[pmid %in% dataForFocus$PMID], dataForFocus$FOCUS)
+# head(cbind(pmid[pmid %in% dataForFocus$PMID], dataForFocus$PMID) )  ### yup, wrong! 
+# 
 
 
 #### Modeling ####
@@ -40,19 +36,29 @@ allFeatures = paste(names(dataForFocus[-(1:4)]), collapse=' + ')
 allFeatures = gsub(' + isEconomics', '', allFeatures, fixed=T)
 econoFormula = as.formula(paste('isEconomics ~ ', allFeatures))
 
-fullModelForEconomics = glm(data=dataForFocus,
-                            econoFormula, 
-                            family=binomial)
-summary(fullModelForEconomics)
+#fullModelForEconomics = glm(data=dataForFocus,
+                            # econoFormula, 
+                            # family=binomial)
+#summary(fullModelForEconomics)
 stepModelForEconomics = step(fullModelForEconomics, scope = ~ 1)
 
 predictedLogits = predict(stepModelForEconomics, newdata=titleFocusMatrix)
 inverseLogit = function(z)exp(z)/(1+exp(z))
 predictedProbs = inverseLogit(predictedLogits)
 imputationMerge =   merge(all = TRUE,
-                          data.frame(PMID=names(predictedLogits), predictedLogits, predictedProbs),
+                          data.frame(PMID=names(predictedLogits), 
+                                     predictedLogits, 
+                                     predictedProbs,
+                                     titles, years, 
+                                     oncotype_in_TiAbKw,
+                                     mammaprint_in_TiAbKw),
                           dataForFocus[c('PMID', 'isEconomics')]
 )
+imputationMerge$titles[sapply(imputationMerge$isEconomics, isTRUE)]
+sort(imputationMerge$titles[sapply(imputationMerge$isEconomics, isTRUE)]) ==
+  sort(titles[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ] )
+####  OK we're all set now.  Remember to use isTRUE for booleans:  isTRUE(NA) is FALSE! ####
+
 table(imputationMerge$isEconomics, exclude=NULL)
 nrow(imputationMerge)
 IR.df$PMID = IR.df$pmid
@@ -91,3 +97,16 @@ dimnames(summary(glmResults[[1]])$coefficients)
 sapply(glmResults, function(result)
   coef(summary(result))['as.numeric(years)', 'z value']
 )
+
+multipleImputationMeanVariance = function(results=glmResults){
+  nReps = length(results)
+  summaries = lapply(results, summary)
+  estimates = sapply(summaries, function(summary) (summary$coef) [-1, 1])
+  stdErrors = sapply(summaries, function(summary) (summary$coef) [-1, 2])
+  theMeans = apply(estimates, 1, mean)
+  within = apply(stdErrors^2, 1, mean)
+  between = apply(estimates, 1, var)
+  return( cbind(theMeans, within = within, between = between,
+            mImpVariance = within + (nReps+1)/nReps*between))
+}
+multipleImputationMeanVariance()
