@@ -54,3 +54,4 @@ ourNotes$Done = !is.na(ourNotes$STATUS) & (ourNotes$STATUS!='in progress...')
 table(ourNotes$notRelevant, exclude=NULL)
 table(ourNotes$Done, exclude=NULL)
 ourNotes[is.na(ourNotes$notRelevant & !is.na(ourNotes$Done)), 'PMID']
+ourNotes = ourNotes[!ourNotes$notRelevant, ]
