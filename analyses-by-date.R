@@ -89,7 +89,6 @@ abline(h=8, lty=2)
 title(paste('up to ', MaxNumPMID, ' per PMID group'))
 
 
-plotYears()
 mammaPrintByYear = selectionTable[2, 1, ]
 oncotypePrintByYear = selectionTable[1, 2, ]
 cbind(oncotypePrintByYear)
@@ -109,6 +108,7 @@ glm.out.dataForYearStudy = glm(data=dataForYearStudy,
     count ~ year * test, family=poisson)
 summary(glm.out.dataForYearStudy)
 predictions = exp(predict(glm.out.dataForYearStudy))
+plotYears()
 lines(dataForYearStudy$year[dataForYearStudy$test=='mp'], 
       predictions[dataForYearStudy$test=='mp'], col='red', lwd=2)
 lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
