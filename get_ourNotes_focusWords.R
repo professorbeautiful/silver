@@ -48,6 +48,20 @@ rownames(titleFocusMatrix) = pmid
 View(titleFocusMatrix)
 sapply(titleFocusMatrix, table)
 
+#### incidence counts for abstracts ####
+abstractFocusMatrix = as.data.frame(sapply(
+  focusWords,
+  function(word)
+    as.vector(sapply(abstracts, function(thisAbstract) 
+      sum(gregexpr(text=thisAbstract, pattern=word, ignore.case = TRUE)[[1]]
+          > 0) ) )
+)  )
+rownames(abstractFocusMatrix) = pmid
+View(abstractFocusMatrix)
+sapply(abstractFocusMatrix, table)
+
+
+
 names(ourNotes)
 ourNotes$notRelevant = (ourNotes$STATUS=='DONE; NOT RELEVANT' | ourNotes$FOCUS=='NOT RELEVANT')
 ourNotes$Done = !is.na(ourNotes$STATUS) & (ourNotes$STATUS!='in progress...')
