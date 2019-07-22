@@ -27,6 +27,8 @@ View(ourNotes)
 ourNotes = ourNotes[-1, ]   #first row is mistaken.
 fieldChoices = googlesheets::gs_read(ourSheet, ws=2)
 fieldChoices = fieldChoices[-1, ]
+
+### focusWords ####
 focusWords = fieldChoices$`FOCUS (primary endpoint)`
 focusWords = unique(unlist(strsplit(focusWords, split='[ :]')))
 focusWords = focusWords[!is.na(focusWords)]
@@ -36,7 +38,7 @@ letsChopTheS = c(13, 27)
 focusWords[letsChopTheS] = sub('s$', '', focusWords[letsChopTheS] )
 focusWords = c(focusWords, 'cost', 'outcome')
 
-#### incidence counts for titles
+#### incidence counts for titles ####
 titleFocusMatrix = as.data.frame(sapply(
   focusWords,
   function(word)
