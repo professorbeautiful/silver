@@ -39,9 +39,6 @@ plotYears = function(subset) {
          col=legendColors
   )
 }
-plotYears()
-
-
 
 plot(ecdf(pubMedPubDate))
 
@@ -114,3 +111,15 @@ lines(dataForYearStudy$year[dataForYearStudy$test=='mp'],
 lines(dataForYearStudy$year[dataForYearStudy$test=='odx'], 
       predictions[dataForYearStudy$test=='odx'], col='green', lwd=2)
 title('Poisson regression')
+
+
+for(focus in focusCategories) {
+  subset = bigMerge$PMID[sapply(bigMerge$FOCUS==focus, isTRUE)]
+  cat(focus, ' ', length(subset), '\n')
+  if(length(subset) > 10) {
+    plotYears(subset)
+    title(paste0(focus, ' (N=', length(subset), ')') )
+  }
+}
+
+
