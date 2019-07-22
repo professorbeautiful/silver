@@ -12,16 +12,17 @@ loglm(   ~ FOCUS + oncotype_in_TiAbKw,
 #### Try to analyze each FOCUS separately ####
 focusCategories = unique(bigMerge$FOCUS)[-2]   ## Removing NA.
 bigMerge$years = as.numeric(bigMerge$years)
-allFocusModels = lapply(focusCategories, function(focus) {
+glmAfocus = function(focus) {
   print(focus)
-  try((glm( (FOCUS ==  focus)
+  try((glm( (FOCUS %in%  focus)
             ~  oncotype_in_TiAbKw * years,
             data=bigMerge,
             subset= onlyOneTest & !is.na(bigMerge$FOCUS), 
             family=poisson
   ))
   )
-})
+}
+allFocusModels = lapply(focusCategories, glmAfocus)
 names(allFocusModels[[1]])
 sapply(allFocusModels, '[', i='deviance')
 sapply(allFocusModels, '[', i='null.deviance')
@@ -29,5 +30,9 @@ allFocusAnovas = lapply(allFocusModels, anova)
 allFocusAnovas
 allFocusSummaries = lapply(allFocusModels, summary)
 names(allFocusSummaries) = focusCategories
-
+allFocusSummaries
 ####  No relationships anywhere ####
+
+
+summary(glmAfocus(patientBehaviorFocus))
+summary(glmAfocus(patientOutcomeFocus))
