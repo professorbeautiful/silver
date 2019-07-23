@@ -52,6 +52,8 @@ EMusage = sort(decreasing = TRUE,
     sum)
 )
 
+
+####  plot of effect measure usage ####
 plot(EMusage, axes=F, xlab="")
 axis(2)
 numText = 9
@@ -73,10 +75,14 @@ patientOrientedEM = c(    "Positive predictive value",
       "Number needed to treat (NNT)",
       "Net reclassification improvement"
 )
-
+SQUARE = 15
+OPENSQUARE = 0
 points(which(names(EMusage) %in% patientOrientedEM), 
        EMusage[which(names(EMusage) %in% patientOrientedEM)], 
-       col='red', pch=15)
+       col='red', pch=SQUARE, cex=1.6)
+# points(which(names(EMusage) %in% patientOrientedEM), 
+#        EMusage[which(names(EMusage) %in% patientOrientedEM)], 
+#        col='black', pch=OPENSQUARE, cex=1.6)
 abline(h=0)
 text(x=1, y=2, 'predictive values', col='red', pos=4)
 lines(x=c(18, which(names(EMusage)=='Negative predictive value')), 
