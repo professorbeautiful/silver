@@ -12,12 +12,17 @@ loglm(   ~ FOCUS + oncotype_in_TiAbKw,
 #### Try to analyze each FOCUS separately ####
 focusCategories = unique(bigMerge$FOCUS)[-2]   ## Removing NA.
 bigMerge$years = as.numeric(bigMerge$years)
-glmAfocus = function(focus, predictor = 'oncotype_in_TiAbKw * years') {
+# glmAfocus = function(focus, predictor = 'oncotype_in_TiAbKw * years') {
+#   print(focus)
+#   try((glm( 
+#   formula=(FOCUS %in%  focus)
+#             ~  #oncotype_in_TiAbKw * 
+#     years ,
+
+glmAfocus = function(focus) {
   print(focus)
-  try((glm( 
-  formula=(FOCUS %in%  focus)
-            ~  #oncotype_in_TiAbKw * 
-    years ,
+  try((glm( (FOCUS %in%  focus)
+            ~  oncotype_in_TiAbKw * years,
             data=bigMerge,
             subset= onlyOneTest & !is.na(bigMerge$FOCUS) & years < 2019, 
             family=poisson
@@ -48,3 +53,4 @@ allFocusModels[1]
 sort(sapply(allFocusModels, function(model) model$coefficients[2]))
 
 table(focusCategories)
+
