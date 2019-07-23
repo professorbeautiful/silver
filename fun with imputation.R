@@ -1,4 +1,4 @@
-#### logistic regression ####
+#### FOCUS ####
 dataForFocus = merge(ourNotes[c('PMID', 'STATUS', 'FOCUS', 'notRelevant')],
                      data.frame(PMID=rownames(titleFocusMatrix), titleFocusMatrix)
 )
@@ -17,19 +17,6 @@ titles[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ]
 dataForFocus$PMID[dataForFocus$isEconomics] [1]
 pmid[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ] [1]
 sort(pmid[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ]) [1]
-####  Using imputationMerge defined below, it will be ok.
-
-# table(years[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]])  ### First one in 2005
-# table(oncotype_in_TiAbKw[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]],
-#       mammaprint_in_TiAbKw[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics]],
-#       dnn = c('ODX', 'MP')
-# )  
-# 
-# #### so why is this wrong?  ####
-# table(years[pmid %in% dataForFocus$PMID], dataForFocus$FOCUS)
-# head(cbind(pmid[pmid %in% dataForFocus$PMID], dataForFocus$PMID) )  ### yup, wrong! 
-# 
-
 
 #### Modeling ####
 allFeatures = paste(names(dataForFocus[-(1:4)]), collapse=' + ')
