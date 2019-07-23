@@ -17,10 +17,31 @@ table(
     "Positive predictive value",
     "Negative predictive value",
     "Number needed to treat (NNT)",
-    "Net reclassification improvement",
-    "Recurrence free survival",
-    "Disease free survival")
+    "Net reclassification improvement"
+    # "Recurrence free survival",
+    # "Disease free survival"
+    )
   )  
 )
 
+table(
+  hasEffectMeasure(c(
+    "Positive predictive value",
+    "Negative predictive value",
+    "Number needed to treat (NNT)",
+    "Net reclassification improvement"
+    # "Recurrence free survival",
+    # "Disease free survival"
+  )
+  )  ,
+  hasEffectMeasure(c(
+    # "Positive predictive value",
+    # "Negative predictive value",
+    # "Number needed to treat (NNT)",
+    # "Net reclassification improvement"
+    "Recurrence free survival",
+    "Disease free survival"
+  )
+  )  
+)
 
