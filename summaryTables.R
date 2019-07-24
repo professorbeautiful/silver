@@ -30,8 +30,11 @@ length(pmidSample)
 pmidSampleRelevant = ourNotes$PMID
 ourNotes = merge(ourNotes, data.frame(PMID=pmid, year=years))
 
-plotProportions = function(subset, feature=doctorBehaviorFocus, 
+plotProportions = function(subset,  
                            summaryFunction=mean,
+                           dataset=ourNotes,
+                           fieldName='FOCUS',
+                           feature=doctorBehaviorFocus,
                      .ylab='proportion', 
                      legendLocation = 'topleft',
                      ...) {
@@ -39,9 +42,10 @@ plotProportions = function(subset, feature=doctorBehaviorFocus,
    print(featureName)
    if(missing(subset)) subset = pmid
    inSubset = pmid %in% subset
+   bernoulliOutcome = (dataset[[fieldName]] %in% feature)
    ### we need to omit 2019. not complete.
-   featureByYear = split(ourNotes$FOCUS %in% feature, 
-                                     ourNotes$year)
+   featureByYear = split(bernoulliOutcome, 
+                                     dataset$year)
    
    featureProportion = sapply(featureByYear, mean)
    plot(allyears, featureProportion, 
@@ -58,9 +62,9 @@ plotProportions = function(subset, feature=doctorBehaviorFocus,
          ),
          col='lightgrey'
    )
-   featureByYearAndTest = split(ourNotes$FOCUS %in% feature, 
-                         list(ourNotes$year, 
-                              ourNotes$`Oncotype DX?\nMammaprint?`)
+   featureByYearAndTest = split(bernoulliOutcome, 
+                         list(dataset$year, 
+                              dataset$`Oncotype DX?\nMammaprint?`)
    )
    
    featureProportionByYearAndTest = sapply(featureByYearAndTest, mean)
@@ -68,7 +72,7 @@ plotProportions = function(subset, feature=doctorBehaviorFocus,
    lwd = 2
    offset=0.2
    for(year in ouryears) {
-      for(test in unique(ourNotes$`Oncotype DX?\nMammaprint?`)) {
+      for(test in unique(dataset$`Oncotype DX?\nMammaprint?`)) {
          if(is.na(test)) break
          thisData = featureProportionByYearAndTest[[paste(sep='.',
                                    year,test)]]
@@ -100,3 +104,12 @@ plotProportions = function(subset, feature=doctorBehaviorFocus,
 plotProportions()
 plotProportions(feature = patientBehaviorFocus)
 plotProportions(feature = patientOutcomeFocus, legendLocation='topright')
+
+##    bernoulliOutcome = (dataset[[fieldName]] %in% feature)
+
+imputations[[1]]$year = imputations[[1]]$years
+imputations[[1]]$`Oncotype DX?\nMammaprint?` = 
+   bigMerge$`Oncotype DX?\nMammaprint?`
+plotProportions(dataset = imputations[[1]], 
+                fieldName = 'imputedValuesForIsEconomics', feature = 1)
+
