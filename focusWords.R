@@ -33,3 +33,5 @@ rownames(abstractFocusMatrix) = pmid
 View(abstractFocusMatrix)
 sapply(abstractFocusMatrix, table)
 
+dim(titleFocusMatrix)
+dim(abstractFocusMatrix)
