@@ -1,13 +1,45 @@
 
+### 
+grep("NCT0", abstracts)  ### 13 of them.
+NCTabstracts = grep("NCT0", abstracts, v=T)  ### 13 of them.
+### Without the '0', you pick up 3 that are 'neoadjuvant therapy' 
+NCT_hits = regexpr("NCT0", abstracts)
+NCT_hits = NCT_hits[NCT_hits>0]
+## For context:
+substring(NCTabstracts, NCT_hits-20, last = NCT_hits+20)
+## the NCTnumbers:
+NCTnumbers = sort(unique(substring(NCTabstracts, NCT_hits, last = NCT_hits+10) ))
+## 8 different studies.
+
+CTgovRecords = 
+  sapply(NCTnumbers,
+         function(num) {
+           CTgovXMLstring = RCurl::getURL(
+             paste0(
+               "https://clinicaltrials.gov/ct2/results?",
+               'show_xprt=Y&xprt=', num, '&displayxml=true&count=200'
+             )
+           )
+           CTgovXML = 
+             xml2::read_xml(CTgovXMLstring)
+           CTgovAsList = xml2::as_list(CTgovXML)
+         }
+)
+
+
+#### end of retrieval for the NCT numbers in our study ####
+
+
+### General retrieval for oncotype dx ####
 # XML::xmlParse
 CTgovXMLstring = RCurl::getURL(
   paste0(
   "https://clinicaltrials.gov/ct2/results?",
   'show_xprt=Y&xprt=cancer+AND+',
-  "(oncotype+OR+mammaprint)&displayxml=true&count=200"
+  "(oncotype+OR+'21-gene')&displayxml=true&count=200"
   )
 )
-
+### "21-gene" doesn't add any.
 CTgovXML = 
   xml2::read_xml(CTgovXMLstring)
 
@@ -18,6 +50,7 @@ names(CTgovAsList[[1]] )
 CTgovAsList[[1]] [['query']] [[1]]
 
 CTs = CTgovAsList[[1]] [-(1:4)]
+NCTs = sapply(CTs$clinical_study, function(ct) ct$clinical_study$nct_id[[1]])
 
 length(CTs)  ## 35
 CTs[[1]]
@@ -99,9 +132,12 @@ table(table(druglist))
 table(druglist)[table(druglist) > 1]
 drugtable = data.frame(drug=druglist)
 rownames(drugtable) = drugtable$drug
-drugtable$count[] = table(druglist))
+drugtable$count[] = table(druglist)
 
-mk-0752 
-vantictumab (OMP-18R5)
+#mk-0752 
+#vantictumab (OMP-18R5)
 
 ope = function(filename) system(command = paste("open ", filename))
+
+
+
