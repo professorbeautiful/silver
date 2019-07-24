@@ -1,7 +1,12 @@
 #### FOCUS ####
-dataForFocus = merge(ourNotes[c('PMID', 'STATUS', 'FOCUS', 'notRelevant')],
-                     data.frame(PMID=rownames(titleFocusMatrix), titleFocusMatrix)
+dataForFocus = merge(by = 'PMID', 
+#  merge(
+    ourNotes,
+#    data.frame(PMID=rownames(abstractFocusMatrix), abstractFocusMatrix)
+#  ),
+  data.frame(PMID=rownames(titleFocusMatrix), titleFocusMatrix)
 )
+#names(dataForFocus) = gsub('(.*[ #?/\n].*)', '`\\1`', names(dataForFocus))
 dataForFocus$isEconomics = (dataForFocus$FOCUS=='Economics')
 dataForFocus = dataForFocus[dataForFocus$notRelevant == FALSE
                             & !is.na(dataForFocus$STATUS) 
@@ -19,8 +24,12 @@ pmid[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ] [1]
 sort(pmid[pmid %in% dataForFocus$PMID[dataForFocus$isEconomics] ]) [1]
 
 #### Modeling ####
-allFeatures = paste(names(dataForFocus[-(1:4)]), collapse=' + ')
-allFeatures = gsub(' + isEconomics', '', allFeatures, fixed=T)
+
+allFeatures = paste(
+  paste0('`', names(dataForFocus)[-(1:4)], '`')
+        , collapse=' + '
+)
+allFeatures = gsub(' + `isEconomics`', '', allFeatures, fixed=T)
 econoFormula = as.formula(paste('isEconomics ~ ', allFeatures))
 
 #fullModelForEconomics = glm(data=dataForFocus,
@@ -52,7 +61,7 @@ IR.df$PMID = IR.df$pmid
 imputationMerge = merge(imputationMerge, IR.df)
 
 #### Begin imputation ####
-doImputation = function(NReps = 10, printMe = FALSE,
+doImputation = function(NReps = 10, printMe = FALSE, saveImputations=TRUE,
                         ourFormula=imputedValuesForIsEconomics
                         ~ as.numeric(years) + oncotype_in_TiAbKw + mammaprint_in_TiAbKw) {
   glmResults = lapply(1:NReps, 
@@ -72,6 +81,10 @@ doImputation = function(NReps = 10, printMe = FALSE,
            #               imputationMerge$isEconomics,
            #               exclude=NULL) 
            # )
+           if(saveImputations) {
+             if(ignoreMe==1) imputations <<- list()
+             imputations[[ignoreMe]] <<- imputationMerge
+           }
            glm.out = glm(data=imputationMerge, formula = ourFormula, family=binomial)   #### test interesting questions here.
            if(printMe) print(summary(glm.out))
            glm.out
@@ -103,3 +116,12 @@ multipleImputationMeanVariance()
 multipleImputationMeanVariance(results = doImputation(ourFormula=imputedValuesForIsEconomics
                                ~ as.numeric(years)) )
 
+table(bigMerge$oncotype_in_TiAbKw, bigMerge$mammaprint_in_TiAbKw, bigMerge$`Oncotype DX?
+Mammaprint?`)  
+
+table(imputations[[1]]$`Oncotype DX?\nMammaprint?`, 
+      imputations[[1]]$imputedValuesForIsEconomics)
+chisq.test(
+  table(imputations[[1]]$`Oncotype DX?\nMammaprint?`, 
+        imputations[[1]]$imputedValuesForIsEconomics)
+  [-1, ])$resid
