@@ -8,12 +8,13 @@ table(match(years, allyears))
 
 ouryears = allyears[allyears<2019]
 plotYears = function(subset, summaryFunction=sum,
+                     dataset=bigMerge,
                      .ylab='article count', ...) {
   if(missing(subset)) subset = pmid
   inSubset = pmid %in% subset
   ### we need to omit 2019. not complete.
   yeartable = sapply(ouryears, function(y)
-    summaryFunction(years[inSubset] == y))
+    summaryFunction(bigMerge$years[inSubset] == y))
   ## as.vector(table(years[inSubset]))
   plot(ouryears, yeartable,
        type='h', col='lightgrey' ,
@@ -21,20 +22,21 @@ plotYears = function(subset, summaryFunction=sum,
        ...)
   offset=0.2
   lwd = 2
-  
-  for(year in ouryears) {
-    points(type='h',
-           offset+year, 
-           summaryFunction(years[mammaprint_in_TiAbKw&!oncotype_in_TiAbKw&inSubset]==year),
-           col='red', lwd=lwd)
-    points(type='h',
-           -offset+year, sum(years[oncotype_in_TiAbKw&!mammaprint_in_TiAbKw&inSubset]==year),
-           col='green', lwd=lwd)
-    points(type='h',
-           year, summaryFunction(years[mammaprint_in_TiAbKw&oncotype_in_TiAbKw&inSubset]==year),
-           col='blue', lwd=lwd)
-    lines(c(year-offset,year+offset), c(0,0))
-  }
+  with(dataset, {
+    for(year in ouryears) {
+      points(type='h',
+             offset+year, 
+             summaryFunction(years[mammaprint_in_TiAbKw&!oncotype_in_TiAbKw&inSubset]==year),
+             col='red', lwd=lwd)
+      points(type='h',
+             -offset+year, sum(years[oncotype_in_TiAbKw&!mammaprint_in_TiAbKw&inSubset]==year),
+             col='green', lwd=lwd)
+      points(type='h',
+             year, summaryFunction(years[mammaprint_in_TiAbKw&oncotype_in_TiAbKw&inSubset]==year),
+             col='blue', lwd=lwd)
+      lines(c(year-offset,year+offset), c(0,0))
+    }
+  })
   legendColors = c('green', 'red', 'blue', 'grey')
   legend('topleft',
          legend=c('ODX', 'MP', 'both', 'total') , 
@@ -44,6 +46,7 @@ plotYears = function(subset, summaryFunction=sum,
   )
 }
 plotYears()
+plotYears(subset = bigMerge$PMID[which(bigMerge$isEconomics)])
 plot(ecdf(pubMedPubDate))
 
 
